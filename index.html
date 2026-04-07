@@ -1654,7 +1654,7 @@ async function cargarBorrador(data) {
     total_lotes: data.total_lotes
   };
   STATE.totalLotes = data.total_lotes;
-  STATE.lotes = datosBorrador;
+  STATE.lotes = Array.isArray(datosBorrador) ? datosBorrador : (datosBorrador.lotes || []);
   STATE.loteActual = data.lotes_completados + 1;
 
   renderizarLote();
