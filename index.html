@@ -1604,6 +1604,7 @@ async function init() {
         return;
       }
       STATE.inspector.id = data.inspector_id;
+      STATE.inspector.telegram_id = data.telegram_id;
       STATE.modo = 'retomar';
       STATE.borrador = data;
       mostrarLoading('Cargando catálogos...');
