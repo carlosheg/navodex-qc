@@ -2811,38 +2811,57 @@ async function confirmarCierre() {
 
 mostrarLoading('Preparando certificado...');
 
-// Contar total de fotos en todos los lotes
+let lotesComprimidos;
 
-const totalFotos = STATE.lotes.reduce((acc, l) => acc + (l.fotos?.length
-|| 0), 0);
+if (STATE.modo === 'retomar') {
+  // En modo retomar: lotes viejos tienen ruta_onedrive, lote nuevo tiene fotos con data
+  const totalFotosNuevas = STATE.lotes
+    .slice(STATE.borrador.lotes_completados)
+    .reduce((acc, l) => acc + (l.fotos?.length || 0), 0);
 
-// Calcular parametros de compresion segun total
+  let maxWidth = 800, calidad = 0.7;
+  if (totalFotosNuevas <= 5) { maxWidth = 800; calidad = 0.7; }
+  else if (totalFotosNuevas <= 15) { maxWidth = 600; calidad = 0.5; }
+  else { maxWidth = 400; calidad = 0.35; }
 
-let maxWidth, calidad;
+  lotesComprimidos = await Promise.all(STATE.lotes.map(async (lote, idx) => {
+    const esLoteViejo = idx < STATE.borrador.lotes_completados;
+    if (esLoteViejo) {
+      // Lote viejo — usar ruta_onedrive
+      return {
+        ...lote,
+        fotos: (lote.fotos || []).map(f => ({
+          name: f.name,
+          ruta_onedrive: f.ruta_onedrive || null
+        }))
+      };
+    } else {
+      // Lote nuevo — comprimir fotos
+      const fotosComprimidas = await Promise.all((lote.fotos || []).map(async foto => {
+        if (!foto.data) return { name: foto.name, ruta_onedrive: foto.ruta_onedrive || null };
+        const dataComprimida = await comprimirImagen(foto.data, maxWidth, calidad);
+        return { name: foto.name, base64: dataComprimida };
+      }));
+      return { ...lote, fotos: fotosComprimidas };
+    }
+  }));
+} else {
+  // Modo nuevo — comprimir todas las fotos
+  const totalFotos = STATE.lotes.reduce((acc, l) => acc + (l.fotos?.length || 0), 0);
+  let maxWidth, calidad;
+  if (totalFotos <= 5) { maxWidth = 800; calidad = 0.7; }
+  else if (totalFotos <= 15) { maxWidth = 600; calidad = 0.5; }
+  else if (totalFotos <= 25) { maxWidth = 400; calidad = 0.35; }
+  else { maxWidth = 300; calidad = 0.25; }
 
-if (totalFotos <= 5) { maxWidth = 800; calidad = 0.7; }
-
-else if (totalFotos <= 15) { maxWidth = 600; calidad = 0.5; }
-
-else if (totalFotos <= 25) { maxWidth = 400; calidad = 0.35; }
-
-else { maxWidth = 300; calidad = 0.25; }
-
-// Comprimir todas las fotos de todos los lotes
-
-const lotesComprimidos = await Promise.all(STATE.lotes.map(async lote => {
-
-const fotosComprimidas = await Promise.all((lote.fotos || []).map(async foto => {
-
-const dataComprimida = await comprimirImagen(foto.data, maxWidth, calidad);
-
-return { name: foto.name, base64: dataComprimida };
-
-}));
-
-return { ...lote, fotos: fotosComprimidas };
-
-}));
+  lotesComprimidos = await Promise.all(STATE.lotes.map(async lote => {
+    const fotosComprimidas = await Promise.all((lote.fotos || []).map(async foto => {
+      const dataComprimida = await comprimirImagen(foto.data, maxWidth, calidad);
+      return { name: foto.name, base64: dataComprimida };
+    }));
+    return { ...lote, fotos: fotosComprimidas };
+  }));
+}
 
 mostrarLoading('Enviando certificado...');
 
