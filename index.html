@@ -2812,6 +2812,24 @@ async function confirmarCierre() {
 
 mostrarLoading('Preparando certificado...');
 
+// Si el lote en curso tiene datos y no fue guardado, guardarlo automáticamente
+if (STATE.loteActual === STATE.totalLotes && STATE.lotes.length < STATE.totalLotes) {
+  const loteEnCursoData = {
+    numero_lote: STATE.loteActual,
+    proveedor_id: STATE.loteEnCurso.proveedor_id,
+    proveedor_nombre: STATE.catalogos.proveedores.find(p => p.id === STATE.loteEnCurso.proveedor_id)?.nombre,
+    metodo_id: STATE.loteEnCurso.metodo_id,
+    metodo_nombre: STATE.catalogos.metodos.find(m => m.id === STATE.loteEnCurso.metodo_id)?.nombre,
+    producto_id: STATE.loteEnCurso.producto_id,
+    producto: STATE.catalogos.productos.find(p => p.id === STATE.loteEnCurso.producto_id),
+    no_lote_fabricante: STATE.loteEnCurso.no_lote_fabricante,
+    pruebas: { ...STATE.loteEnCurso.pruebas },
+    fotos: STATE.loteEnCurso.fotos.map(f => ({ name: f.name, data: f.data })),
+    ai_datos: STATE.loteEnCurso.ai_datos
+  };
+  STATE.lotes.push(loteEnCursoData);
+}
+
 let lotesComprimidos;
 
 if (STATE.modo === 'retomar') {
