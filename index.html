@@ -2814,6 +2814,17 @@ mostrarLoading('Preparando certificado...');
 
 // Si el lote en curso tiene datos y no fue guardado, guardarlo automáticamente
 if (STATE.loteActual === STATE.totalLotes && STATE.lotes.length < STATE.totalLotes) {
+  // Esperar hasta 5s a que todas las fotos terminen de comprimir (son async)
+  const esperarFotos = async () => {
+    const inicio = Date.now();
+    while (Date.now() - inicio < 5000) {
+      const pendientes = STATE.loteEnCurso.fotos.filter(f => !f.data && !f.ruta_onedrive);
+      if (pendientes.length === 0) break;
+      await new Promise(r => setTimeout(r, 100));
+    }
+  };
+  await esperarFotos();
+
   const loteEnCursoData = {
     numero_lote: STATE.loteActual,
     proveedor_id: STATE.loteEnCurso.proveedor_id,
@@ -2824,7 +2835,7 @@ if (STATE.loteActual === STATE.totalLotes && STATE.lotes.length < STATE.totalLot
     producto: STATE.catalogos.productos.find(p => p.id === STATE.loteEnCurso.producto_id),
     no_lote_fabricante: STATE.loteEnCurso.no_lote_fabricante,
     pruebas: { ...STATE.loteEnCurso.pruebas },
-    fotos: STATE.loteEnCurso.fotos.map(f => ({ name: f.name, data: f.data })),
+    fotos: STATE.loteEnCurso.fotos.map(f => ({ name: f.name, data: f.data || null, ruta_onedrive: f.ruta_onedrive || null })),
     ai_datos: STATE.loteEnCurso.ai_datos
   };
   STATE.lotes.push(loteEnCursoData);
