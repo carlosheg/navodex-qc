@@ -1,1548 +1,391 @@
 <!DOCTYPE html>
-
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport" content=" width=device-width, initial-scale=1.0,
-maximum-scale=1.0, user-scalable=no">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NAVODEX — Inspector QC</title>
-
-<link
-href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap"
-rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-
 :root {
-
---bg: #0d0f14;
-
---surface: #161820;
-
---surface2: #1e2028;
-
---surface3: #252830;
-
---border: #2a2d38;
-
---border2: #363945;
-
---accent: #00e5b0;
-
---accent-dim: rgba(0,229,176,0.12);
-
---blue: #4d9fff;
-
---blue-dim: rgba(77,159,255,0.12);
-
---warn: #ff8c42;
-
---warn-dim: rgba(255,140,66,0.12);
-
---danger: #ff4757;
-
---danger-dim: rgba(255,71,87,0.12);
-
---pass: #00e5b0;
-
---fail: #ff4757;
-
---text: #e8eaf2;
-
---text2: #9ca3b0;
-
---text3: #5a6070;
-
---mono: 'DM Mono', monospace;
-
---sans: 'DM Sans', sans-serif;
-
---r: 12px;
-
---r-sm: 8px;
-
+  --bg: #080D10;
+  --surface: #0D1318;
+  --surface2: #121820;
+  --surface3: #172028;
+  --border: #1E2D38;
+  --border2: #253545;
+  --accent: #4983CB;
+  --accent-dim: rgba(73,131,203,0.12);
+  --blue: #004E71;
+  --blue-dim: rgba(0,78,113,0.15);
+  --warn: #D4884A;
+  --warn-dim: rgba(212,136,74,0.12);
+  --danger: #C05050;
+  --danger-dim: rgba(192,80,80,0.12);
+  --pass: #969B68;
+  --fail: #C05050;
+  --text: #F0EFEE;
+  --text2: #989EA0;
+  --text3: #4A5560;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --r: 12px;
+  --r-sm: 8px;
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0;
--webkit-tap-highlight-color: transparent; }
-
-body {
-
-font-family: var(--sans);
-
-background: var(--bg);
-
-color: var(--text);
-
-min-height: 100dvh;
-
-overflow-x: hidden;
-
-}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100dvh; overflow-x: hidden; }
 
 /* ── HEADER ── */
-
-.header {
-
-background: var(--surface);
-
-border-bottom: 1px solid var(--border);
-
-padding: 12px 16px;
-
-display: flex;
-
-align-items: center;
-
-gap: 10px;
-
-position: sticky;
-
-top: 0;
-
-z-index: 100;
-
-}
-
-.header-logo {
-
-width: 32px; height: 32px;
-
-background: linear-gradient(135deg, var(--accent), var(--blue));
-
-border-radius: 8px;
-
-display: flex; align-items: center; justify-content: center;
-
-font-size: 16px; flex-shrink: 0;
-
-}
-
+.header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 100; }
+.header-logo { width: 32px; height: 32px; background: transparent; border-radius: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
 .header-title { font-size: 15px; font-weight: 600; flex: 1; }
-
-.header-sub { font-size: 11px; color: var(--text3); font-family:
-var(--mono); }
-
-.header-badge {
-
-font-family: var(--mono);
-
-font-size: 10px;
-
-background: var(--surface2);
-
-border: 1px solid var(--border);
-
-color: var(--text3);
-
-padding: 3px 8px;
-
-border-radius: 20px;
-
-}
+.header-sub { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+.header-badge { font-family: var(--mono); font-size: 10px; background: var(--surface2); border: 1px solid var(--border); color: var(--text3); padding: 3px 8px; border-radius: 20px; }
 
 /* ── PROGRESS ── */
-
-.progress-track {
-
-height: 2px;
-
-background: var(--border);
-
-position: relative;
-
-}
-
-.progress-fill {
-
-height: 100%;
-
-background: linear-gradient(90deg, var(--accent), var(--blue));
-
-transition: width 0.4s ease;
-
-border-radius: 0 2px 2px 0;
-
-}
+.progress-track { height: 2px; background: var(--border); position: relative; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); transition: width 0.4s ease; border-radius: 0 2px 2px 0; }
 
 /* ── SCREENS ── */
-
 .screen { display: none; padding: 16px; padding-bottom: 100px; }
-
 .screen.active { display: block; animation: fadeIn 0.25s ease; }
-
-@keyframes fadeIn {
-
-from { opacity: 0; transform: translateY(8px); }
-
-to { opacity: 1; transform: translateY(0); }
-
-}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ── CARDS ── */
-
-.card {
-
-background: var(--surface);
-
-border: 1px solid var(--border);
-
-border-radius: var(--r);
-
-padding: 16px;
-
-margin-bottom: 12px;
-
-}
-
-.card-title {
-
-font-family: var(--mono);
-
-font-size: 10px;
-
-color: var(--accent);
-
-letter-spacing: 0.1em;
-
-text-transform: uppercase;
-
-margin-bottom: 12px;
-
-display: flex;
-
-align-items: center;
-
-gap: 6px;
-
-}
-
-.card-title .dot {
-
-width: 6px; height: 6px;
-
-border-radius: 50%;
-
-background: var(--accent);
-
-}
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
+.card-title { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.card-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 
 /* ── SECTION LABEL ── */
-
-.section-label {
-
-font-size: 13px;
-
-font-weight: 600;
-
-color: var(--text2);
-
-margin-bottom: 8px;
-
-margin-top: 4px;
-
-}
-
+.section-label { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 8px; margin-top: 4px; }
 .section-required { color: var(--warn); margin-left: 3px; }
 
 /* ── BUTTON GRID ── */
-
-.btn-grid {
-
-display: flex;
-
-flex-wrap: wrap;
-
-gap: 7px;
-
-margin-bottom: 4px;
-
-}
-
-.opt-btn {
-
-background: var(--surface2);
-
-border: 1.5px solid var(--border2);
-
-color: var(--text);
-
-padding: 9px 14px;
-
-border-radius: 8px;
-
-font-size: 13px;
-
-font-family: var(--sans);
-
-font-weight: 500;
-
-cursor: pointer;
-
-transition: all 0.15s;
-
-letter-spacing: 0.01em;
-
-}
-
+.btn-grid { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 4px; }
+.opt-btn { background: var(--surface2); border: 1.5px solid var(--border2); color: var(--text); padding: 9px 14px; border-radius: 8px; font-size: 13px; font-family: var(--sans); font-weight: 500; cursor: pointer; transition: all 0.15s; letter-spacing: 0.01em; }
 .opt-btn:active { transform: scale(0.96); }
-
-.opt-btn.selected {
-
-background: var(--accent-dim);
-
-border-color: var(--accent);
-
-color: var(--accent);
-
-font-weight: 600;
-
-}
-
+.opt-btn.selected { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); font-weight: 600; }
 .opt-btn.pass-btn { border-color: var(--pass); color: var(--pass); }
-
 .opt-btn.fail-btn { border-color: var(--fail); color: var(--fail); }
-
-.opt-btn.pass-btn.selected { background: rgba(0,229,176,0.15); }
-
-.opt-btn.fail-btn.selected { background: rgba(255,71,87,0.15); }
-
+.opt-btn.pass-btn.selected { background: rgba(150,155,104,0.15); }
+.opt-btn.fail-btn.selected { background: rgba(192,80,80,0.15); }
 .opt-btn.warn-btn { border-color: var(--warn); color: var(--warn); }
-
 .opt-btn.warn-btn.selected { background: var(--warn-dim); }
 
 /* ── TEXT INPUT ── */
-
-.input-field {
-
-width: 100%;
-
-background: var(--surface2);
-
-border: 1.5px solid var(--border2);
-
-border-radius: var(--r-sm);
-
-color: var(--text);
-
-font-family: var(--sans);
-
-font-size: 15px;
-
-padding: 12px 14px;
-
-outline: none;
-
-transition: border-color 0.2s;
-
-}
-
+.input-field { width: 100%; background: var(--surface2); border: 1.5px solid var(--border2); border-radius: var(--r-sm); color: var(--text); font-family: var(--sans); font-size: 15px; padding: 12px 14px; outline: none; transition: border-color 0.2s; }
 .input-field:focus { border-color: var(--accent); }
-
 .input-field::placeholder { color: var(--text3); }
-
-.input-suffix {
-
-position: relative;
-
-}
-
+.input-suffix { position: relative; }
 .input-suffix input { padding-right: 44px; }
-
-.input-suffix .suffix {
-
-position: absolute;
-
-right: 14px; top: 50%;
-
-transform: translateY(-50%);
-
-font-family: var(--mono);
-
-font-size: 12px;
-
-color: var(--text3);
-
-}
+.input-suffix .suffix { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-family: var(--mono); font-size: 12px; color: var(--text3); }
 
 /* ── RESULT INDICATOR ── */
-
-.result-indicator {
-
-display: none;
-
-font-family: var(--mono);
-
-font-size: 11px;
-
-padding: 4px 10px;
-
-border-radius: 20px;
-
-margin-top: 4px;
-
-}
-
-.result-indicator.pass { background: rgba(0,229,176,0.12); color:
-var(--pass); display: inline-flex; gap: 4px; align-items: center; }
-
-.result-indicator.fail { background: rgba(255,71,87,0.12); color:
-var(--fail); display: inline-flex; gap: 4px; align-items: center; }
-
-.result-indicator.warn { background: var(--warn-dim); color:
-var(--warn); display: inline-flex; gap: 4px; align-items: center; }
+.result-indicator { display: none; font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: 20px; margin-top: 4px; }
+.result-indicator.pass { background: rgba(150,155,104,0.12); color: var(--pass); display: inline-flex; gap: 4px; align-items: center; }
+.result-indicator.fail { background: rgba(192,80,80,0.12); color: var(--fail); display: inline-flex; gap: 4px; align-items: center; }
+.result-indicator.warn { background: var(--warn-dim); color: var(--warn); display: inline-flex; gap: 4px; align-items: center; }
 
 /* ── AI SECTION ── */
-
-.ai-section {
-
-background: var(--surface2);
-
-border: 1px solid var(--border);
-
-border-radius: var(--r);
-
-padding: 14px;
-
-margin-bottom: 12px;
-
-}
-
-.ai-header {
-
-display: flex;
-
-align-items: center;
-
-gap: 8px;
-
-margin-bottom: 12px;
-
-}
-
-.ai-badge {
-
-background: linear-gradient(135deg, var(--accent-dim), var(--blue-dim));
-
-border: 1px solid var(--accent);
-
-border-radius: 6px;
-
-padding: 3px 8px;
-
-font-family: var(--mono);
-
-font-size: 10px;
-
-color: var(--accent);
-
-letter-spacing: 0.08em;
-
-}
-
+.ai-section { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 12px; }
+.ai-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.ai-badge { background: linear-gradient(135deg, var(--accent-dim), var(--blue-dim)); border: 1px solid var(--accent); border-radius: 6px; padding: 3px 8px; font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.08em; }
 .ai-title { font-size: 13px; font-weight: 600; }
-
-.ai-result {
-
-display: none;
-
-background: var(--surface3);
-
-border: 1px solid var(--border2);
-
-border-radius: var(--r-sm);
-
-padding: 12px;
-
-margin-top: 10px;
-
-}
-
+.ai-result { display: none; background: var(--surface3); border: 1px solid var(--border2); border-radius: var(--r-sm); padding: 12px; margin-top: 10px; }
 .ai-result.visible { display: block; animation: fadeIn 0.3s ease; }
-
-.ai-field {
-
-display: flex;
-
-justify-content: space-between;
-
-align-items: center;
-
-padding: 6px 0;
-
-border-bottom: 1px solid var(--border);
-
-gap: 8px;
-
-}
-
+.ai-field { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); gap: 8px; }
 .ai-field:last-child { border-bottom: none; }
-
-.ai-field-key {
-
-font-family: var(--mono);
-
-font-size: 11px;
-
-color: var(--text3);
-
-flex-shrink: 0;
-
-min-width: 100px;
-
-}
-
-.ai-field-val {
-
-font-size: 13px;
-
-color: var(--text);
-
-text-align: right;
-
-}
-
+.ai-field-key { font-family: var(--mono); font-size: 11px; color: var(--text3); flex-shrink: 0; min-width: 100px; }
+.ai-field-val { font-size: 13px; color: var(--text); text-align: right; }
 .ai-field-val.matched { color: var(--pass); }
-
 .ai-field-val.unmatched { color: var(--warn); }
-
-.ai-confidence {
-
-margin-top: 8px;
-
-font-family: var(--mono);
-
-font-size: 10px;
-
-color: var(--text3);
-
-}
+.ai-confidence { margin-top: 8px; font-family: var(--mono); font-size: 10px; color: var(--text3); }
 
 /* ── PHOTO UPLOAD ── */
-
-.photo-area {
-
-border: 1.5px dashed var(--border2);
-
-border-radius: var(--r);
-
-padding: 16px;
-
-text-align: center;
-
-cursor: pointer;
-
-transition: border-color 0.2s;
-
-position: relative;
-
-}
-
+.photo-area { border: 1.5px dashed var(--border2); border-radius: var(--r); padding: 16px; text-align: center; cursor: pointer; transition: border-color 0.2s; position: relative; }
 .photo-area:active { border-color: var(--accent); }
-
 .photo-area .photo-icon { font-size: 28px; margin-bottom: 6px; }
-
 .photo-area .photo-text { font-size: 13px; color: var(--text2); }
-
-.photo-area .photo-sub { font-size: 11px; color: var(--text3);
-margin-top: 3px; font-family: var(--mono); }
-
-.photo-previews { display: flex; flex-wrap: wrap; gap: 8px; margin-top:
-10px; }
-
-.photo-thumb {
-
-width: 72px; height: 72px;
-
-border-radius: 8px;
-
-overflow: hidden;
-
-border: 1px solid var(--border2);
-
-position: relative;
-
-}
-
+.photo-area .photo-sub { font-size: 11px; color: var(--text3); margin-top: 3px; font-family: var(--mono); }
+.photo-previews { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.photo-thumb { width: 72px; height: 72px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border2); position: relative; }
 .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-.photo-thumb .remove {
-
-position: absolute; top: 3px; right: 3px;
-
-width: 18px; height: 18px;
-
-background: rgba(0,0,0,0.8);
-
-border-radius: 50%;
-
-display: flex; align-items: center; justify-content: center;
-
-font-size: 10px; cursor: pointer; color: #fff;
-
-}
-
-.photo-required-badge {
-
-display: inline-flex;
-
-align-items: center;
-
-gap: 4px;
-
-font-family: var(--mono);
-
-font-size: 10px;
-
-color: var(--warn);
-
-margin-top: 6px;
-
-}
+.photo-thumb .remove { position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; background: rgba(0,0,0,0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; color: #fff; }
+.photo-required-badge { display: inline-flex; align-items: center; gap: 4px; font-family: var(--mono); font-size: 10px; color: var(--warn); margin-top: 6px; }
 
 /* ── LOTE HEADER ── */
-
-.lote-header {
-
-background: linear-gradient(135deg, var(--accent-dim), var(--blue-dim));
-
-border: 1px solid var(--accent);
-
-border-radius: var(--r);
-
-padding: 12px 16px;
-
-margin-bottom: 16px;
-
-display: flex;
-
-align-items: center;
-
-justify-content: space-between;
-
-}
-
-.lote-title {
-
-font-family: var(--mono);
-
-font-size: 13px;
-
-color: var(--accent);
-
-font-weight: 500;
-
-}
-
-.lote-badge {
-
-font-family: var(--mono);
-
-font-size: 10px;
-
-background: var(--accent);
-
-color: #000;
-
-padding: 3px 8px;
-
-border-radius: 20px;
-
-font-weight: 600;
-
-}
+.lote-header { background: linear-gradient(135deg, var(--accent-dim), var(--blue-dim)); border: 1px solid var(--accent); border-radius: var(--r); padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+.lote-title { font-family: var(--mono); font-size: 13px; color: var(--accent); font-weight: 500; }
+.lote-badge { font-family: var(--mono); font-size: 10px; background: var(--accent); color: #000; padding: 3px 8px; border-radius: 20px; font-weight: 600; }
 
 /* ── COPY LOTE ── */
-
-.copy-lote-banner {
-
-background: var(--blue-dim);
-
-border: 1px solid var(--blue);
-
-border-radius: var(--r-sm);
-
-padding: 10px 14px;
-
-margin-bottom: 12px;
-
-display: none;
-
-}
-
+.copy-lote-banner { background: var(--blue-dim); border: 1px solid var(--blue); border-radius: var(--r-sm); padding: 10px 14px; margin-bottom: 12px; display: none; }
 .copy-lote-banner.visible { display: block; }
-
-.copy-lote-title {
-
-font-size: 12px;
-
-color: var(--blue);
-
-font-weight: 600;
-
-margin-bottom: 6px;
-
-}
-
+.copy-lote-title { font-size: 12px; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
 .copy-lote-btns { display: flex; flex-wrap: wrap; gap: 6px; }
-
-.copy-lote-btn {
-
-background: var(--surface2);
-
-border: 1px solid var(--blue);
-
-color: var(--blue);
-
-padding: 6px 12px;
-
-border-radius: 6px;
-
-font-size: 12px;
-
-cursor: pointer;
-
-font-family: var(--sans);
-
-transition: all 0.15s;
-
-}
-
+.copy-lote-btn { background: var(--surface2); border: 1px solid var(--blue); color: var(--accent); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: var(--sans); transition: all 0.15s; }
 .copy-lote-btn:active { background: var(--blue-dim); }
 
 /* ── PRUEBA CARD ── */
-
-.prueba-card {
-
-background: var(--surface2);
-
-border: 1px solid var(--border);
-
-border-radius: var(--r-sm);
-
-padding: 12px;
-
-margin-bottom: 8px;
-
-}
-
-.prueba-header {
-
-display: flex;
-
-justify-content: space-between;
-
-align-items: flex-start;
-
-margin-bottom: 8px;
-
-}
-
+.prueba-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px; margin-bottom: 8px; }
+.prueba-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
 .prueba-name { font-size: 14px; font-weight: 600; }
-
-.prueba-meta {
-
-font-family: var(--mono);
-
-font-size: 10px;
-
-color: var(--text3);
-
-text-align: right;
-
-line-height: 1.5;
-
-}
-
-.prueba-req {
-
-font-family: var(--mono);
-
-font-size: 10px;
-
-color: var(--text2);
-
-margin-bottom: 8px;
-
-background: var(--surface3);
-
-padding: 4px 8px;
-
-border-radius: 4px;
-
-display: inline-block;
-
-}
+.prueba-meta { font-family: var(--mono); font-size: 10px; color: var(--text3); text-align: right; line-height: 1.5; }
+.prueba-req { font-family: var(--mono); font-size: 10px; color: var(--text2); margin-bottom: 8px; background: var(--surface3); padding: 4px 8px; border-radius: 4px; display: inline-block; }
 
 /* ── SUMMARY ── */
-
-.summary-lote {
-
-background: var(--surface2);
-
-border: 1px solid var(--border);
-
-border-radius: var(--r);
-
-padding: 14px;
-
-margin-bottom: 10px;
-
-}
-
-.summary-lote-title {
-
-font-family: var(--mono);
-
-font-size: 11px;
-
-color: var(--accent);
-
-margin-bottom: 10px;
-
-text-transform: uppercase;
-
-letter-spacing: 0.08em;
-
-}
-
-.summary-row {
-
-display: flex;
-
-justify-content: space-between;
-
-padding: 4px 0;
-
-border-bottom: 1px solid var(--border);
-
-font-size: 13px;
-
-gap: 8px;
-
-}
-
+.summary-lote { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 10px; }
+.summary-lote-title { font-family: var(--mono); font-size: 11px; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+.summary-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border); font-size: 13px; gap: 8px; }
 .summary-row:last-child { border-bottom: none; }
-
-.summary-key { color: var(--text3); font-family: var(--mono); font-size:
-11px; flex-shrink: 0; }
-
+.summary-key { color: var(--text3); font-family: var(--mono); font-size: 11px; flex-shrink: 0; }
 .summary-val { text-align: right; word-break: break-word; }
-
 .summary-val.pass { color: var(--pass); font-weight: 600; }
-
 .summary-val.fail { color: var(--fail); font-weight: 600; }
 
 /* ── RESULT BADGE ── */
-
-.result-badge {
-
-padding: 16px;
-
-border-radius: var(--r);
-
-text-align: center;
-
-margin-bottom: 12px;
-
-}
-
-.result-badge.pass { background: rgba(0,229,176,0.1); border: 1px solid
-var(--pass); }
-
-.result-badge.fail { background: rgba(255,71,87,0.1); border: 1px solid
-var(--fail); }
-
+.result-badge { padding: 16px; border-radius: var(--r); text-align: center; margin-bottom: 12px; }
+.result-badge.pass { background: rgba(150,155,104,0.1); border: 1px solid var(--pass); }
+.result-badge.fail { background: rgba(192,80,80,0.1); border: 1px solid var(--fail); }
 .result-badge .rb-icon { font-size: 32px; margin-bottom: 6px; }
-
 .result-badge .rb-text { font-size: 18px; font-weight: 600; }
-
-.result-badge .rb-sub { font-size: 12px; color: var(--text2);
-margin-top: 4px; font-family: var(--mono); }
+.result-badge .rb-sub { font-size: 12px; color: var(--text2); margin-top: 4px; font-family: var(--mono); }
 
 /* ── BOTTOM ACTIONS ── */
-
-.bottom-actions {
-
-position: fixed;
-
-bottom: 0; left: 0; right: 0;
-
-background: var(--surface);
-
-border-top: 1px solid var(--border);
-
-padding: 12px 16px;
-
-padding-bottom: calc(12px + env(safe-area-inset-bottom));
-
-display: flex;
-
-gap: 8px;
-
-z-index: 100;
-
-}
-
-.btn-primary {
-
-flex: 2;
-
-background: linear-gradient(135deg, var(--accent), #00c896);
-
-border: none;
-
-color: #000;
-
-padding: 14px;
-
-border-radius: var(--r-sm);
-
-font-size: 14px;
-
-font-weight: 600;
-
-cursor: pointer;
-
-font-family: var(--sans);
-
-transition: opacity 0.2s;
-
-}
-
+.bottom-actions { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); display: flex; gap: 8px; z-index: 100; }
+.btn-primary { flex: 2; background: linear-gradient(135deg, #4983CB, #004E71); border: none; color: #F0EFEE; padding: 14px; border-radius: var(--r-sm); font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--sans); transition: opacity 0.2s; }
 .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-
 .btn-primary:not(:disabled):active { opacity: 0.85; }
-
-.btn-secondary {
-
-flex: 1;
-
-background: var(--surface2);
-
-border: 1px solid var(--border2);
-
-color: var(--text2);
-
-padding: 14px;
-
-border-radius: var(--r-sm);
-
-font-size: 13px;
-
-cursor: pointer;
-
-font-family: var(--sans);
-
-transition: opacity 0.2s;
-
-}
-
+.btn-secondary { flex: 1; background: var(--surface2); border: 1px solid var(--border2); color: var(--text2); padding: 14px; border-radius: var(--r-sm); font-size: 13px; cursor: pointer; font-family: var(--sans); transition: opacity 0.2s; }
 .btn-secondary:active { opacity: 0.75; }
-
-.btn-danger {
-
-flex: 1;
-
-background: var(--danger-dim);
-
-border: 1px solid var(--danger);
-
-color: var(--danger);
-
-padding: 14px;
-
-border-radius: var(--r-sm);
-
-font-size: 13px;
-
-cursor: pointer;
-
-font-family: var(--sans);
-
-}
+.btn-danger { flex: 1; background: var(--danger-dim); border: 1px solid var(--danger); color: var(--danger); padding: 14px; border-radius: var(--r-sm); font-size: 13px; cursor: pointer; font-family: var(--sans); }
 
 /* ── LOADING ── */
-
-.loading-overlay {
-
-display: none;
-
-position: fixed;
-
-inset: 0;
-
-background: rgba(13,15,20,0.9);
-
-z-index: 200;
-
-align-items: center;
-
-justify-content: center;
-
-flex-direction: column;
-
-gap: 12px;
-
-}
-
+.loading-overlay { display: none; position: fixed; inset: 0; background: rgba(8,13,16,0.9); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
 .loading-overlay.visible { display: flex; }
-
-.loading-spinner {
-
-width: 40px; height: 40px;
-
-border: 3px solid var(--border2);
-
-border-top-color: var(--accent);
-
-border-radius: 50%;
-
-animation: spin 0.8s linear infinite;
-
-}
-
-.loading-text { font-family: var(--mono); font-size: 12px; color:
-var(--text2); }
-
+.loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+.loading-text { font-family: var(--mono); font-size: 12px; color: var(--text2); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── ALERT ── */
-
-.alert {
-
-padding: 10px 14px;
-
-border-radius: var(--r-sm);
-
-font-size: 13px;
-
-margin-bottom: 10px;
-
-display: none;
-
-}
-
+.alert { padding: 10px 14px; border-radius: var(--r-sm); font-size: 13px; margin-bottom: 10px; display: none; }
 .alert.visible { display: block; }
-
-.alert.warn { background: var(--warn-dim); border: 1px solid
-var(--warn); color: var(--warn); }
-
-.alert.danger { background: var(--danger-dim); border: 1px solid
-var(--danger); color: var(--danger); }
-
-.alert.success { background: var(--accent-dim); border: 1px solid
-var(--accent); color: var(--accent); }
+.alert.warn { background: var(--warn-dim); border: 1px solid var(--warn); color: var(--warn); }
+.alert.danger { background: var(--danger-dim); border: 1px solid var(--danger); color: var(--danger); }
+.alert.success { background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent); }
 
 /* ── DIVIDER ── */
-
-.divider {
-
-height: 1px;
-
-background: var(--border);
-
-margin: 16px 0;
-
-}
-
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
 input[type="file"] { display: none; }
-
 </style>
-
 </head>
-
 <body>
 
 <!-- LOADING -->
-
 <div class="loading-overlay" id="loadingOverlay">
-
-<div class="loading-spinner"></div>
-
-<div class="loading-text" id="loadingText">Cargando catálogos...</div>
-
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">Cargando catálogos...</div>
 </div>
 
 <!-- HEADER -->
-
 <div class="header">
-
-<div class="header-logo">🛡️</div>
-
-<div style="flex:1">
-
-<div class="header-title">NAVODEX QC</div>
-
-<div class="header-sub" id="headerSub">Cargando...</div>
-
+  <div class="header-logo">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAADbElEQVR42u2Y7WscVRTGn3Pu7MzuJmtN7Qs0leBrrMFWtrQgaqEgtSL+lX7zczWgUhHqC/RFE2PESm1ErVbamDbdl5mdex4/ZE1sk0Lr3oEtvT/2y8Kd4TznnufcMxeIRCKRSCQSiUQijysS4h16118S4IOup41LGuThkyHjsAPiEvfsEboU5EZ2ubJg/Q4g2/ZBALrJKZ2Zoy8hCj/wV76hL0cJIBm5fJwdet3qk6AHgaTm9s3ouQ+MtlP8kNZuf/ikDXJoonkXK0vw5U5qHxQNsItFD3kXeRdFD51btn9G504Iea83NjA/XJx3UXT/d9xBBYhu/dQx7/nZ43rwEGg7aZC71o+MVuFplgXbp/SJPaBBpNL+EVYAFQJVmLckxfH3JMnC9ZuqBRDQRFeWXN6DSzDo29R+ffUtISvdhIACiCT1f63I4lnUMogg79ozr+hz7fuYYQxLiJSs6X+/7H5ZRtoEyaLPwyfd7unqNAT2wEavx7efuPUbqGUwMwGPvatps6KpIXBWSAL0eRfnP3RGqGJQWGtKj55W8hEQ8O9bnV/9A4ufSq0OAP2On35R594UILihgwvg0NDq7OcFd3UBk1OoN2mlvXBMdu1jWYTVkISOn8MhmSBgF+fdnVWaYe06uret30n2TDNoLSXBy0cAqU9I1pDWU9i1lytL1lkLPURXJoCAAEn7VHlg1qxkLXMzR/Sz961/ByIwP/YmFhgw+O5z9G7Te3TWfHNC2m8LOPrgWbEA2fIA11f1wry6BC5B0fcHnteX34BZFUORhm0/wxDVldev6vfnJG0AQN61l15zB2cBQnW8S2izF4n6H79yv/6AtAEafYn2aW20OMjDzhTVnAMgSEJ46WO3fhO1DH7g00yOvuNqdZoPWEvBBch/vn/hix4ufKQk1KHI/d6nbe4EykHAs6yqKXerkG5e0+UvJW0AhPmy9SRFAnak0F1os4Q2761E/eWv9dpPG2aA2Zh3oe3HLUny4rzr3IKrIfRMGkIADTTAQNshPhIi1u/g/BnZEGY2fCTEF4IGKJ20gayJtIlsAprc1ww3fnOLZ6XeQtZA2hw+MnI7SkbOfinLX4hLQYNL5O8/uTmT3rNLIv7KJS0HbLRgFFH4gn6wvf4eL0Jfrz/U3TrG5no9EolEIpFIJBKJPIr8A4IHkxHpZakxAAAAAElFTkSuQmCC" style="width:32px; height:32px; object-fit:contain;">
+  </div>
+  <div style="flex:1">
+    <div class="header-title" style="letter-spacing:0.06em; font-size:14px;">NAVODEX <span style="color:var(--accent);">QC</span></div>
+    <div class="header-sub" id="headerSub">Cargando...</div>
+  </div>
+  <div class="header-badge" id="headerBadge">—</div>
 </div>
-
-<div class="header-badge" id="headerBadge">—</div>
-
-</div>
-
 <div class="progress-track">
-
-<div class="progress-fill" id="progressFill" style="width:0%"></div>
-
+  <div class="progress-fill" id="progressFill" style="width:0%"></div>
 </div>
 
 <!-- ══════════════════════════════════════
-
-SCREEN 1 — MENU PRINCIPAL
-
-══════════════════════════════════════ -->
-
+     SCREEN 1 — MENU PRINCIPAL
+     ══════════════════════════════════════ -->
 <div class="screen active" id="screen-menu">
-
-<div style="padding: 24px 0 16px; text-align:center;">
-
-<div style="font-size:48px; margin-bottom:12px;">🛡️</div>
-
-<div style="font-size:20px; font-weight:600; margin-bottom:4px;">Inspector QC</div>
-
-<div style="font-family:var(--mono); font-size:12px; color:var(--text3);" id="menuInspectorName">—</div>
-
-</div>
-
-<div class="card">
-
-<div class="card-title"><span class="dot"></span>¿Qué deseas
-hacer?</div>
-
-<div style="display:flex; flex-direction:column; gap:10px;">
-
-<button class="opt-btn" style="padding:16px; font-size:15px; text-align:left; display:flex; align-items:center; gap:10px;"
-onclick="goTo('screen-encabezado')">
-
-<span style="font-size:20px;">📋</span>
-
-<div>
-
-<div style="font-weight:600;">Nuevo Certificado</div>
-
-<div style="font-size:12px; color:var(--text3); font-family:var(--mono); margin-top:2px;">Iniciar registro de inspección</div>
-
-</div>
-
-</button>
-
-<button class="opt-btn" style="padding:16px; font-size:15px; text-align:left; display:flex; align-items:center; gap:10px;"
-onclick="mostrarBorradores()">
-
-<span style="font-size:20px;">▶️</span>
-
-<div>
-
-<div style="font-weight:600;">Retomar Certificado</div>
-
-<div style="font-size:12px; color:var(--text3); font-family:var(--mono); margin-top:2px;">Continuar inspección en proceso</div>
-
-</div>
-
-</button>
-
-</div>
-
-</div>
-
+  <div style="padding: 24px 0 16px; text-align:center;">
+    <div style="margin-bottom:16px; display:flex; justify-content:center;">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAIAAABMXPacAAAG/0lEQVR42u2c228V1xXG17f2njk+x9i1SBqamoqaqsRJEODY0KpVkRokt04e8tI/sS99rdRQUBJQ2qgqNwcccnWaAhXU0MQY43OZmb1WH44d23PiJBgfMdusn7bkq0Zz9rf3XtcZIsMwDMMwDMMwDMMwDMMwDMMwDMMwDMMwDMMwDMMwDMMwDMMwDMOIGTzFn1RN/k3TUxob/oZ+LLGKLD3/5KeemX1CxKUlCRCRoxBC0VbCthesS1I4T6qb5hxEJEXWUdGnXQD2ifvNH0JthKTYOEcKAhgkfP3vcuMDBZPKI2oLUvUvHC9+NklZR8FYvzhzvoLzf9KsRY+h7m4QgAhFOij1OknYtEiViJTAPDWTtJrZ3X91J/QRjx9VlxbpIBETeOO+I5IqGAGuhAHQQNIzNJAqhVyDyOS0a+xh1e3YA1Vo92o9wwTY2gavWWIwhTw0RjDxe8Bt94a3vr4J8N0rmJmylfD8z3n816wB7HaT+8dR3KWyo6wtL57g0RdIwmM6pibAtjQgCRJ0Ytrt2QtV7BYNohGAAJIgaR3HX4f3tgOeTMymRbt4dpSPnILqJrfSBOibh9qjQaclB1/hsQmo7AINKv0BWJThUAqAAclbcvS3bu9+qMRukKsqgCr5BF/dTm5eR9ooB02qwqCpGaQN2l50ZgJ8v+MH4do5d3+B3cCmJASAIpOhvTw5zYAJ0LddwC6Ejl7+C0temmWF06wV9o+7QycgQnAmQD8QIsjiXb7+LtJaKRuqzJq19KWTvO+n0BCpBpUWAAp098H8rPvPJ0ga5Yy0UtCAV2a4PkwaYizwVVuA7oSqBlJ6/x3fXKLV0sq6MVApisYQT77mwDEWWCt+BOnXEx1aDzB71sERaFP9BEx5Ozw/xi+dhCoxTICd3AKrk61KjvP/fu4//gcnA+VSClg6zTD+Czc6DonMK+Vqr3/9WgcNQkD+0Xv+zjzSQfSUs7QoMDHNQ8/ElaWI5Aha+0GUwpUzvvklXK1sDDQv0jpPvc4+IdJYDHJUuRRVAkLroV48DfRUBcBaNItnRvnIq07XK/AwAXZoA3R/IwQO/7vFc+8gKUcGBKdZMxycwMFjLHGkiSLMJqoouJifTf49x2mDJKzZCyUVIpW8rUdf5ecOrP3JBOjDWaRAuPqWW7xNtQapEjtKUqR1qtUBllDowSm4pPqHUJVLS1AVbHESEUHyHBdPp798IzSGqfmQVu7r8iIv3dPlL3nlvnTaCtngSpkAO6AINqxoVULx4J4/90dq7NHmQ8rb3eQREYVV0SLY3z6uk6f7pZt1g/eoj8jyYlhqr0fF6/FDHM3PEQgAIgLAzGmD94zQ0AiGf6hDe7UxrPVhf/cWXfhzCMWqjxQbvuJLvruME5f4X71RjPyYvC84EVJSIREKQUbH3ZGHcuUMgTXClv8YImFwVmTZZ1eDr+V5kE6bsjblGUlBIG0vy9ikP3BUVYjZBNj580dVCAh3PuXr52lggCC0WoYEESkjhBU9dsqN/AgSX42+4sm47hbQruNffHIhufUhl8syIKHADlMzSAdsB/RRDSXI7Fm3vEBucxIC0NAJI/v8sWmopaP7pwAQOm29eMZLAbhSWUazZnHgZXfohKWjd9gF3ZwFcmHxNmbfRpKWn5YBS9bSwyd53xjF07AVm9ugQeGKm9f8Z5e4Nggp1ehVRDE1zYPDsZxFUWZDCVzMnXd3v6B0oGQMSHIZ+IGbnAE4imA4iooYejISKhL00mnfbpLzROtpZwVL3g7PjfnDJ1mk+l1zsaajAZaVJb70VweQ+pIx0Kwph47zTw5324pMgH5IIAJkC/P88QXU0nLTHFCEQidOufoI5Z0qb4OY++tVFRw+ei+5/TmSgZ7oLEgyoJO/Q61BIpUty0Thhuq3WWQVmT3rOyvEPZFB3g7Pjub7X6Q8q+wmiPwJE1UCiuYDunbOu7TnhRBQFVnrcDQB+qcBFzc/dF9c5VoDPYV4RaW90Zgas7Y+p0SBYu68+2pBeyNkc0N3Og74hj1ARJK36fKbLhTEiOhlTBzD7X2P2VRV5uL+Ar//tnO1iCpju+FR21VEFFzcmPPzl1Grx1Ifrnhrojzq/yuQf3DO37uBpB6FMdhFO2DNXEgIdPFN114uP05jAnyrsd1qbMcrzVeWcOUsM4i6L9naoYvvWgHgCL482BO5bShJKmCWO/N+7m+uNkjMxG51YG10v68AFXhrogKdphBj43GhSiFHp01EIDxqw4+KBIA+/aerD9PoIQ1FNxWBtQUHEDqtKpjpJx+kA4BP9ZvuBKIasm23W612kvr62rWxOSkRJO+ovb71KQfVvjft52e0tW8YhmEYhmEYhmEYhmEYhmEYhmEYhmEYhmEYhmEYhmEYhmEYhmEYj83/AfbyTYLfT2yPAAAAAElFTkSuQmCC" style="width:80px; height:80px; object-fit:contain;">
+    </div>
+    <div style="font-size:18px; font-weight:600; margin-bottom:4px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text);">Inspector QC</div>
+    <div style="font-family:var(--mono); font-size:12px; color:var(--text3);" id="menuInspectorName">—</div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> ¿Qué deseas hacer?</div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <button class="opt-btn" style="padding:16px; font-size:15px; text-align:left; display:flex; align-items:center; gap:10px;" onclick="goTo('screen-encabezado')">
+        <span style="font-size:20px;">📋</span>
+        <div>
+          <div style="font-weight:600;">Nuevo Certificado</div>
+          <div style="font-size:12px; color:var(--text3); font-family:var(--mono); margin-top:2px;">Iniciar registro de inspección</div>
+        </div>
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════
-
-SCREEN 2 — ENCABEZADO DEL CERTIFICADO
-
-══════════════════════════════════════ -->
-
+     SCREEN 2 — ENCABEZADO DEL CERTIFICADO
+     ══════════════════════════════════════ -->
 <div class="screen" id="screen-encabezado">
-
-<div class="card">
-
-<div class="card-title"><span class="dot"></span>Datos del
-Certificado</div>
-
-<div class="section-label">Cliente <span
-class="section-required">*</span></div>
-
-<div class="btn-grid" id="clientesBtns"></div>
-
-<div class="divider"></div>
-
-<div class="section-label">No. de Pieza <span
-class="section-required">*</span></div>
-
-<input type="text" class="input-field" id="noPieza" placeholder="ej.
-GM0182B" oninput="validarEncabezado()">
-
-<div style="margin-top:12px;" class="section-label">No. de Proyecto
-<span class="section-required">*</span></div>
-
-<input type="text" class="input-field" id="noProyecto" placeholder="ej.
-99-26069" oninput="validarEncabezado()">
-
-<div style="margin-top:12px;" class="section-label">Cantidad de Piezas
-<span class="section-required">*</span></div>
-
-<input type="text" class="input-field" id="cantidadPiezas"
-placeholder="ej. 3 PZAS" oninput="validarEncabezado()">
-
-<div style="margin-top:12px;" class="section-label">Total de Lotes en
-este Certificado <span class="section-required">*</span></div>
-
-<div class="btn-grid" id="totalLotesBtns">
-
-<button class="opt-btn" onclick="seleccionarTotalLotes(1)">1</button>
-
-<button class="opt-btn" onclick="seleccionarTotalLotes(2)">2</button>
-
-<button class="opt-btn" onclick="seleccionarTotalLotes(3)">3</button>
-
-<button class="opt-btn" onclick="seleccionarTotalLotes(4)">4</button>
-
-<button class="opt-btn" onclick="seleccionarTotalLotes(5)">5</button>
-
-<button class="opt-btn" onclick="seleccionarTotalLotes(6)">6+</button>
-
-</div>
-
-<div id="totalLotesCustom" style="display:none; margin-top:8px;">
-
-<input type="number" class="input-field" id="totalLotesInput"
-placeholder="Número de lotes" min="1" max="20"
-oninput="validarEncabezado()">
-
-</div>
-
-</div>
-
-<div class="bottom-actions">
-
-<button class="btn-secondary" onclick="goTo('screen-menu')">←
-Atrás</button>
-
-<button class="btn-primary" id="btnEncabezado" disabled
-onclick="iniciarLotes()">Comenzar Inspección →</button>
-
-</div>
-
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> Datos del Certificado</div>
+    <div class="section-label">Cliente <span class="section-required">*</span></div>
+    <div class="btn-grid" id="clientesBtns"></div>
+    <div class="divider"></div>
+    <div class="section-label">No. de Pieza <span class="section-required">*</span></div>
+    <input type="text" class="input-field" id="noPieza" placeholder="ej. GM0182B" oninput="validarEncabezado()">
+    <div style="margin-top:12px;" class="section-label">No. de Proyecto <span class="section-required">*</span></div>
+    <input type="text" class="input-field" id="noProyecto" placeholder="ej. 99-26069" oninput="validarEncabezado()">
+    <div style="margin-top:12px;" class="section-label">Cantidad de Piezas <span class="section-required">*</span></div>
+    <input type="text" class="input-field" id="cantidadPiezas" placeholder="ej. 3 PZAS" oninput="validarEncabezado()">
+    <div style="margin-top:12px;" class="section-label">Total de Lotes en este Certificado <span class="section-required">*</span></div>
+    <div class="btn-grid" id="totalLotesBtns">
+      <button class="opt-btn" onclick="seleccionarTotalLotes(1)">1</button>
+      <button class="opt-btn" onclick="seleccionarTotalLotes(2)">2</button>
+      <button class="opt-btn" onclick="seleccionarTotalLotes(3)">3</button>
+      <button class="opt-btn" onclick="seleccionarTotalLotes(4)">4</button>
+      <button class="opt-btn" onclick="seleccionarTotalLotes(5)">5</button>
+      <button class="opt-btn" onclick="seleccionarTotalLotes(6)">6+</button>
+    </div>
+    <div id="totalLotesCustom" style="display:none; margin-top:8px;">
+      <input type="number" class="input-field" id="totalLotesInput" placeholder="Número de lotes" min="1" max="20" oninput="validarEncabezado()">
+    </div>
+  </div>
+  <div class="bottom-actions">
+    <button class="btn-secondary" onclick="goTo('screen-menu')">← Atrás</button>
+    <button class="btn-primary" id="btnEncabezado" disabled onclick="iniciarLotes()">Comenzar Inspección →</button>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════
-
-SCREEN 3 — LOTE
-
-══════════════════════════════════════ -->
-
+     SCREEN 3 — LOTE
+     ══════════════════════════════════════ -->
 <div class="screen" id="screen-lote">
-
-<div class="lote-header">
-
-<div class="lote-title" id="loteHeaderTitle">Lote 1</div>
-
-<div class="lote-badge" id="loteHeaderBadge">1 / 1</div>
-
-</div>
-
-<!-- COPIAR LOTE ANTERIOR -->
-
-<div class="copy-lote-banner" id="copyLoteBanner">
-
-<div class="copy-lote-title">📋 Copiar configuración de lote
-anterior</div>
-
-<div class="copy-lote-btns" id="copyLoteBtns"></div>
-
-</div>
-
-<!-- AI SECTION -->
-
-<div class="ai-section">
-
-<div class="ai-header">
-
-<div class="ai-badge">IA</div>
-
-<div class="ai-title">Identificar pintura con foto</div>
-
-</div>
-
-<div style="display:flex; gap:8px;">
-
-<button class="opt-btn" style="flex:1; padding:12px; text-align:center;"
-onclick="document.getElementById('fotoAI').click()">
-
-📷 Foto de la caja
-
-</button>
-
-<button class="opt-btn" style="flex:1; padding:12px; text-align:center;"
-onclick="toggleManual()">
-
-✏️ Seleccionar manual
-
-</button>
-
-</div>
-
-<input type="file" id="fotoAI" accept="image/*" capture="environment"
-onchange="analizarImagen(this)">
-
-<div class="ai-result" id="aiResult">
-
-<div style="font-family:var(--mono); font-size:10px; color:var(--text3); margin-bottom:8px;">RESULTADO DEL ANÁLISIS</div>
-
-<div id="aiFields"></div>
-
-<div class="ai-confidence" id="aiConfidence"></div>
-
-<div style="margin-top:10px; font-size:12px; color:var(--text2);">
-
-Verifica los datos y corrige si es necesario:
-
-</div>
-
-</div>
-
-</div>
-
-<!-- PROVEEDOR -->
-
-<div class="card" id="proveedorCard">
-
-<div class="card-title"><span class="dot"></span>Proveedor</div>
-
-<div class="alert warn" id="alertProveedor"></div>
-
-<div class="btn-grid" id="proveedoresBtns"></div>
-
-</div>
-
-<!-- MÉTODO -->
-
-<div class="card" id="metodoCard" style="display:none;">
-
-<div class="card-title"><span class="dot"></span>Método de
-Aplicación</div>
-
-<div class="btn-grid" id="metodosBtns"></div>
-
-</div>
-
-<!-- PRODUCTO -->
-
-<div class="card" id="productoCard" style="display:none;">
-
-<div class="card-title"><span class="dot"></span>Producto</div>
-
-<div class="alert warn" id="alertProducto"></div>
-
-<div class="btn-grid" id="productosBtns"></div>
-
-</div>
-
-<!-- LOTE DEL FABRICANTE -->
-
-<div class="card" id="loteCard" style="display:none;">
-
-<div class="card-title"><span class="dot"></span>No. de Lote del
-Fabricante</div>
-
-<div class="alert warn" id="alertLote"></div>
-
-<input type="text" class="input-field" id="noLoteFabricante"
-placeholder="ej. BBF1045488" oninput="validarLote()">
-
-</div>
-
-<!-- PRUEBAS DE CALIDAD -->
-
-<div class="card" id="pruebasCard" style="display:none;">
-
-<div class="card-title"><span class="dot"></span>Pruebas de
-Calidad</div>
-
-<div id="pruebasContainer"></div>
-
-</div>
-
-<!-- FOTOS DEL LOTE -->
-
-<div class="card" id="fotosCard" style="display:none;">
-
-<div class="card-title"><span class="dot"></span>Evidencia
-Fotográfica</div>
-
-<div class="photo-area"
-onclick="document.getElementById('fotosPieza').click()">
-
-<div class="photo-icon">📸</div>
-
-<div class="photo-text">Agregar fotos de inspección</div>
-
-<div class="photo-sub">Cámara o galería · Mínimo 1 foto</div>
-
-</div>
-
-<input type="file" id="fotosPieza" accept="image/*" multiple
-onchange="agregarFotos(this)">
-
-<div class="photo-previews" id="fotosPreview"></div>
-
-<div class="photo-required-badge" id="fotosReqBadge">⚠️ Se requiere
-mínimo 1 foto para continuar</div>
-
-</div>
-
-<!-- GUARDAR BORRADOR -->
-
-<div class="card" id="borradoresCard" style="display:none;">
-
-<div class="card-title"><span class="dot"
-style="background:var(--warn)"></span>Guardar y continuar después</div>
-
-<div style="font-size:13px; color:var(--text2); margin-bottom:12px; line-height:1.6;">
-
-Guarda el progreso actual y continúa cuando lleguen los demás carritos.
-
-</div>
-
-<button class="opt-btn warn-btn" style="width:100%; padding:13px; font-size:14px;" onclick="guardarBorrador()">
-
-💾 Guardar borrador — continuar después
-
-</button>
-
-</div>
-
-<div class="bottom-actions">
-
-<button class="btn-secondary" onclick="lotePrevio()">← Atrás</button>
-
-<button class="btn-primary" id="btnLote" disabled
-onclick="guardarLote()">Guardar Lote →</button>
-
-</div>
-
+  <div class="lote-header">
+    <div class="lote-title" id="loteHeaderTitle">Lote 1</div>
+    <div class="lote-badge" id="loteHeaderBadge">1 / 1</div>
+  </div>
+  <div class="copy-lote-banner" id="copyLoteBanner">
+    <div class="copy-lote-title">📋 Copiar configuración de lote anterior</div>
+    <div class="copy-lote-btns" id="copyLoteBtns"></div>
+  </div>
+  <div class="ai-section">
+    <div class="ai-header">
+      <div class="ai-badge">IA</div>
+      <div class="ai-title">Identificar pintura con foto</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="opt-btn" style="flex:1; padding:12px; text-align:center;" onclick="document.getElementById('fotoAI').click()">📷 Foto de la caja</button>
+      <button class="opt-btn" style="flex:1; padding:12px; text-align:center;" onclick="toggleManual()">✏️ Seleccionar manual</button>
+    </div>
+    <input type="file" id="fotoAI" accept="image/*" onchange="analizarImagen(this)">
+    <div class="ai-result" id="aiResult">
+      <div style="font-family:var(--mono); font-size:10px; color:var(--text3); margin-bottom:8px;">RESULTADO DEL ANÁLISIS</div>
+      <div id="aiFields"></div>
+      <div class="ai-confidence" id="aiConfidence"></div>
+      <div style="margin-top:10px; font-size:12px; color:var(--text2);">Verifica los datos y corrige si es necesario:</div>
+    </div>
+  </div>
+  <div class="card" id="proveedorCard">
+    <div class="card-title"><span class="dot"></span> Proveedor</div>
+    <div class="alert warn" id="alertProveedor"></div>
+    <div class="btn-grid" id="proveedoresBtns"></div>
+  </div>
+  <div class="card" id="metodoCard" style="display:none;">
+    <div class="card-title"><span class="dot"></span> Método de Aplicación</div>
+    <div class="btn-grid" id="metodosBtns"></div>
+  </div>
+  <div class="card" id="productoCard" style="display:none;">
+    <div class="card-title"><span class="dot"></span> Producto</div>
+    <div class="alert warn" id="alertProducto"></div>
+    <div class="btn-grid" id="productosBtns"></div>
+  </div>
+  <div class="card" id="loteCard" style="display:none;">
+    <div class="card-title"><span class="dot"></span> No. de Lote del Fabricante</div>
+    <div class="alert warn" id="alertLote"></div>
+    <input type="text" class="input-field" id="noLoteFabricante" placeholder="ej. BBF1045488" oninput="validarLote()">
+  </div>
+  <div class="card" id="pruebasCard" style="display:none;">
+    <div class="card-title"><span class="dot"></span> Pruebas de Calidad</div>
+    <div id="pruebasContainer"></div>
+  </div>
+  <div class="card" id="fotosCard" style="display:none;">
+    <div class="card-title"><span class="dot"></span> Evidencia Fotográfica</div>
+    <div class="photo-area" onclick="document.getElementById('fotosPieza').click()">
+      <div class="photo-icon">📸</div>
+      <div class="photo-text">Agregar fotos de inspección</div>
+      <div class="photo-sub">Cámara o galería · Mínimo 1 foto</div>
+    </div>
+    <input type="file" id="fotosPieza" accept="image/*" multiple onchange="agregarFotos(this)">
+    <div class="photo-previews" id="fotosPreview"></div>
+    <div class="photo-required-badge" id="fotosReqBadge">⚠️ Se requiere mínimo 1 foto para continuar</div>
+  </div>
+  <div class="card" id="borradoresCard" style="display:none;">
+    <div class="card-title"><span class="dot" style="background:var(--warn)"></span> Guardar y continuar después</div>
+    <div style="font-size:13px; color:var(--text2); margin-bottom:12px; line-height:1.6;">Guarda el progreso actual y continúa cuando lleguen los demás carritos.</div>
+    <button class="opt-btn warn-btn" style="width:100%; padding:13px; font-size:14px;" onclick="guardarBorrador()">💾 Guardar borrador — continuar después</button>
+  </div>
+  <div class="bottom-actions">
+    <button class="btn-secondary" onclick="lotePrevio()">← Atrás</button>
+    <button class="btn-primary" id="btnLote" disabled onclick="guardarLote()">Guardar Lote →</button>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════
-
-SCREEN 4 — RESUMEN Y CIERRE
-
-══════════════════════════════════════ -->
-
+     SCREEN 4 — RESUMEN Y CIERRE
+     ══════════════════════════════════════ -->
 <div class="screen" id="screen-resumen">
-
-<div class="card">
-
-<div class="card-title"><span class="dot"></span>Resumen del
-Certificado</div>
-
-<div id="resumenEncabezado"></div>
-
-</div>
-
-<div id="resumenLotes"></div>
-
-<div id="resultadoGeneral"></div>
-
-<div class="card">
-
-<div class="card-title"><span class="dot"></span>Observaciones
-Generales</div>
-
-<textarea class="input-field" id="observaciones" rows="3"
-placeholder="Observaciones adicionales (opcional)..."
-style="resize:none;"></textarea>
-
-</div>
-
-<div class="bottom-actions">
-
-<button class="btn-secondary" onclick="goTo('screen-lote')">←
-Corregir</button>
-
-<button class="btn-primary" onclick="confirmarCierre()">✅ Cerrar y
-Generar PDF</button>
-
-</div>
-
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> Resumen del Certificado</div>
+    <div id="resumenEncabezado"></div>
+  </div>
+  <div id="resumenLotes"></div>
+  <div id="resultadoGeneral"></div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> Observaciones Generales</div>
+    <textarea class="input-field" id="observaciones" rows="3" placeholder="Observaciones adicionales (opcional)..." style="resize:none;"></textarea>
+  </div>
+  <div class="bottom-actions">
+    <button class="btn-secondary" onclick="goTo('screen-lote')">← Corregir</button>
+    <button class="btn-primary" onclick="confirmarCierre()">✅ Cerrar y Generar PDF</button>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════
-
-SCREEN 5 — ENVIADO
-
-══════════════════════════════════════ -->
-
+     SCREEN 5 — ENVIADO
+     ══════════════════════════════════════ -->
 <div class="screen" id="screen-enviado">
-
-<div style="text-align:center; padding:40px 0;">
-
-<div style="font-size:64px; margin-bottom:16px;">✅</div>
-
-<div style="font-size:20px; font-weight:600; color:var(--accent); margin-bottom:8px;">Certificado Enviado</div>
-
-<div style="font-family:var(--mono); font-size:12px; color:var(--text3);" id="enviadoCertNum">—</div>
-
-</div>
-
-<div class="card">
-
-<div class="card-title"><span class="dot"></span>¿Qué sigue?</div>
-
-<div style="font-size:13px; color:var(--text2); line-height:1.7;">
-
-El reporte fue enviado a n8n para su procesamiento.<br><br>
-
-Recibirás una notificación por Telegram cuando el PDF esté listo para
-revisión antes de enviarlo al cliente.
-
-</div>
-
-</div>
-
-<div style="padding: 0 0 100px;">
-
-<button class="btn-primary" style="width:100%;"
-onclick="nuevoInicio()">📋 Nuevo Certificado</button>
-
-</div>
-
+  <div style="text-align:center; padding:40px 0;">
+    <div style="font-size:64px; margin-bottom:16px;">✅</div>
+    <div style="font-size:20px; font-weight:600; color:var(--accent); margin-bottom:8px;">Certificado Enviado</div>
+    <div style="font-family:var(--mono); font-size:12px; color:var(--text3);" id="enviadoCertNum">—</div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> ¿Qué sigue?</div>
+    <div style="font-size:13px; color:var(--text2); line-height:1.7;">
+      El reporte fue enviado a n8n para su procesamiento.<br><br>
+      Recibirás una notificación por Telegram cuando el PDF esté listo para revisión antes de enviarlo al cliente.
+    </div>
+  </div>
+  <div style="padding: 0 0 100px;">
+    <button class="btn-primary" style="width:100%;" onclick="nuevoInicio()">📋 Nuevo Certificado</button>
+  </div>
 </div>
 
 <script>
-
-// ══════════════════════════════════════
-
-// CONFIGURACIÓN
-
-// ══════════════════════════════════════
-
 const CONFIG = {
-
 catalogosUrl: 'https://navodex.app.n8n.cloud/webhook/qc-catalogos',
-
 analizarImagenUrl:
 'https://navodex.app.n8n.cloud/webhook/qc-analizar-imagen',
-
 guardarUrl: 'https://navodex.app.n8n.cloud/webhook/qc-guardar',
-
 enviarUrl: 'https://navodex.app.n8n.cloud/webhook/qc-enviar'
-
 };
-
 // ══════════════════════════════════════
-
 // ESTADO GLOBAL
-
 // ══════════════════════════════════════
-
 let STATE = {
   inspector: { id: null, nombre: null, telegram_id: null },
   modo: 'nuevo',
@@ -1563,11 +406,9 @@ let STATE = {
     ai_datos: null
   }
 };
-
 // ══════════════════════════════════════
 // INIT
 // ══════════════════════════════════════
-
 async function init() {
   const params = new URLSearchParams(window.location.search);
   const token = params.get('token');
@@ -1575,7 +416,6 @@ async function init() {
     mostrarError('Link inválido. Solicita un nuevo link en Telegram.');
     return;
   }
-
   // Detectar tipo de token
   let esTokenNormal = false;
   try {
@@ -1592,7 +432,6 @@ async function init() {
       }
     }
   } catch(e) { esTokenNormal = false; }
-
   if (!esTokenNormal) {
     mostrarLoading('Cargando certificado...');
     try {
@@ -1622,7 +461,6 @@ async function init() {
       return;
     }
   }
-
   mostrarLoading('Cargando catálogos...');
   try {
     const res = await fetch(CONFIG.catalogosUrl);
@@ -1637,15 +475,12 @@ async function init() {
     mostrarError('Error cargando catálogos. Verifica tu conexión.');
   }
 }
-
 async function cargarBorrador(data) {
   const datosBorrador = typeof data.datos_borrador === 'string'
     ? JSON.parse(data.datos_borrador)
     : data.datos_borrador;
-
   const cliente = STATE.catalogos.clientes.find(c => c.id === data.cliente_id);
   STATE.clienteSeleccionado = cliente;
-
   STATE.encabezado = {
     cliente_id: data.cliente_id,
     cliente_nombre: data.cliente_nombre,
@@ -1656,1162 +491,609 @@ async function cargarBorrador(data) {
   STATE.totalLotes = data.total_lotes;
   STATE.lotes = Array.isArray(datosBorrador) ? datosBorrador : (datosBorrador.lotes || []);
   STATE.loteActual = data.lotes_completados + 1;
-
   renderizarLote();
   goTo('screen-lote');
 }
-
 // ══════════════════════════════════════
-
 // NAVEGACIÓN
-
 // ══════════════════════════════════════
-
 function goTo(screenId) {
-
 document.querySelectorAll('.screen').forEach(s =>
 s.classList.remove('active'));
-
 document.getElementById(screenId).classList.add('active');
-
 window.scrollTo(0, 0);
-
 actualizarProgreso(screenId);
-
 }
-
 function actualizarProgreso(screenId) {
-
 const pasos = { 'screen-menu': 0, 'screen-encabezado': 25,
 'screen-lote': 50, 'screen-resumen': 85, 'screen-enviado': 100 };
-
 document.getElementById('progressFill').style.width = (pasos[screenId]
 || 0) + '%';
-
 }
-
 // ══════════════════════════════════════
-
 // RENDERIZAR CLIENTES
-
 // ══════════════════════════════════════
-
 function renderizarClientes() {
-
 const container = document.getElementById('clientesBtns');
-
 container.innerHTML = '';
-
 STATE.catalogos.clientes.forEach(c => {
-
 const btn = document.createElement('button');
-
 btn.className = 'opt-btn';
-
 btn.textContent = c.nombre;
-
 btn.onclick = () => seleccionarCliente(c, btn);
-
 container.appendChild(btn);
-
 });
-
 }
-
 function seleccionarCliente(cliente, btn) {
-
 document.querySelectorAll('#clientesBtns .opt-btn').forEach(b =>
 b.classList.remove('selected'));
-
 btn.classList.add('selected');
-
 STATE.clienteSeleccionado = cliente;
-
 validarEncabezado();
-
 }
-
 // ══════════════════════════════════════
-
 // TOTAL LOTES
-
 // ══════════════════════════════════════
-
 function seleccionarTotalLotes(n) {
-
 document.querySelectorAll('#totalLotesBtns .opt-btn').forEach(b =>
 b.classList.remove('selected'));
-
 event.target.classList.add('selected');
-
 if (n === '6+' || n === 6) {
-
 document.getElementById('totalLotesCustom').style.display = 'block';
-
 STATE.totalLotes = 0;
-
 } else {
-
 document.getElementById('totalLotesCustom').style.display = 'none';
-
 STATE.totalLotes = n;
-
 }
-
 validarEncabezado();
-
 }
-
 // ══════════════════════════════════════
-
 // VALIDAR ENCABEZADO
-
 // ══════════════════════════════════════
-
 function validarEncabezado() {
-
 const pieza = document.getElementById('noPieza').value.trim();
-
 const proyecto = document.getElementById('noProyecto').value.trim();
-
 const cantidad = document.getElementById('cantidadPiezas').value.trim();
-
 const lotesInput = document.getElementById('totalLotesInput').value;
-
 if (document.getElementById('totalLotesCustom').style.display !==
 'none') {
-
 STATE.totalLotes = parseInt(lotesInput) || 0;
-
 }
-
 const valido = STATE.clienteSeleccionado && pieza && proyecto &&
 cantidad && STATE.totalLotes > 0;
-
 document.getElementById('btnEncabezado').disabled = !valido;
-
 }
-
 // ══════════════════════════════════════
-
 // INICIAR LOTES
-
 // ══════════════════════════════════════
-
 function iniciarLotes() {
-
 STATE.encabezado = {
-
 cliente_id: STATE.clienteSeleccionado.id,
-
 cliente_nombre: STATE.clienteSeleccionado.nombre,
-
 contacto_nombre: STATE.clienteSeleccionado.contacto,
-
 contacto_email: STATE.clienteSeleccionado.email,
-
 no_pieza: document.getElementById('noPieza').value.trim(),
-
 no_proyecto: document.getElementById('noProyecto').value.trim(),
-
 cantidad_piezas: document.getElementById('cantidadPiezas').value.trim(),
-
 total_lotes: STATE.totalLotes
-
 };
-
 STATE.loteActual = 1;
-
 STATE.lotes = [];
-
 renderizarLote();
-
 goTo('screen-lote');
-
 }
-
 // ══════════════════════════════════════
-
 // RENDERIZAR LOTE
-
 // ══════════════════════════════════════
-
 function renderizarLote() {
-
 const n = STATE.loteActual;
-
 const total = STATE.totalLotes;
-
 document.getElementById('loteHeaderTitle').textContent = `Lote ${n}`;document.getElementById('loteHeaderBadge').textContent = `${n} /${total}`;document.getElementById('headerBadge').textContent = `L${n}/${total}`;
-
 // Resetear estado del lote en curso
-
 STATE.loteEnCurso = {
-
 proveedor_id: null, metodo_id: null, producto_id: null,
-
 no_lote_fabricante: null, pruebas: {}, fotos: [], ai_datos: null
-
 };
-
 // Limpiar campos
-
 document.getElementById('noLoteFabricante').value = '';
-
 document.getElementById('aiResult').classList.remove('visible');
-
 document.getElementById('fotosPreview').innerHTML = '';
-
 // Ocultar cards hasta selección
-
 ['metodoCard','productoCard','loteCard','pruebasCard','fotosCard','borradoresCard'].forEach(id=> {
-
 document.getElementById(id).style.display = 'none';
-
 });
-
 // Renderizar proveedores
-
 renderizarProveedores();
-
 // Mostrar opción copiar lote anterior
-
 const banner = document.getElementById('copyLoteBanner');
-
 if (n > 1 && STATE.lotes.length > 0) {
-
 banner.classList.add('visible');
-
 renderizarCopyLote();
-
 } else {
-
 banner.classList.remove('visible');
-
 }
-
 document.getElementById('btnLote').disabled = true;
-
 }
-
 // ══════════════════════════════════════
-
 // COPIAR LOTE ANTERIOR
-
 // ══════════════════════════════════════
-
 function renderizarCopyLote() {
-
 const container = document.getElementById('copyLoteBtns');
-
 container.innerHTML = '';
-
 STATE.lotes.forEach((lote, i) => {
-
 const btn = document.createElement('button');btn.className = 'copy-lote-btn';btn.textContent = `Copiar Lote ${i+1}`;
-
 btn.onclick = () => copiarLote(i);
-
 container.appendChild(btn);
-
 });
-
 }
-
 function copiarLote(idx) {
-
 const loteAnterior = STATE.lotes[idx];
-
 STATE.loteEnCurso.proveedor_id = loteAnterior.proveedor_id;
-
 STATE.loteEnCurso.metodo_id = loteAnterior.metodo_id;
-
 STATE.loteEnCurso.producto_id = loteAnterior.producto_id;
-
 // Copiar número de lote del fabricante
-
 if (loteAnterior.no_lote_fabricante) {
-
 document.getElementById('noLoteFabricante').value =
 loteAnterior.no_lote_fabricante;
-
 STATE.loteEnCurso.no_lote_fabricante = loteAnterior.no_lote_fabricante;
-
 }
-
 // Seleccionar proveedor
-
 document.querySelectorAll('#proveedoresBtns .opt-btn').forEach(b => {
-
 if (parseInt(b.dataset.id) === loteAnterior.proveedor_id) {
-
 b.classList.add('selected');
-
 renderizarMetodos(loteAnterior.proveedor_id);
-
 }
-
 });
-
 setTimeout(() => {
-
 // Seleccionar método
-
 document.querySelectorAll('#metodosBtns .opt-btn').forEach(b => {
-
 if (parseInt(b.dataset.id) === loteAnterior.metodo_id) {
-
 b.classList.add('selected');
-
 renderizarProductos(loteAnterior.proveedor_id, loteAnterior.metodo_id);
-
 }
-
 });
-
 setTimeout(() => {
-
 // Seleccionar producto
-
 document.querySelectorAll('#productosBtns .opt-btn').forEach(b => {
-
 if (parseInt(b.dataset.id) === loteAnterior.producto_id) {
-
 b.classList.add('selected');
-
 document.getElementById('loteCard').style.display = 'block';
-
 renderizarPruebas();
-
 }
-
 });
-
 }, 100);
-
 }, 100);
-
 }
-
 // ══════════════════════════════════════
-
 // PROVEEDORES
-
 // ══════════════════════════════════════
-
 function renderizarProveedores(preseleccionarId = null) {
-
 const container = document.getElementById('proveedoresBtns');
-
 container.innerHTML = '';
-
 STATE.catalogos.proveedores.forEach(p => {
-
 const btn = document.createElement('button');
-
 btn.className = 'opt-btn';
-
 btn.textContent = p.nombre;
-
 btn.dataset.id = p.id;
-
 btn.onclick = () => seleccionarProveedor(p.id, btn);
-
 if (preseleccionarId && p.id === preseleccionarId) {
-
 btn.classList.add('selected');
-
 }
-
 container.appendChild(btn);
-
 });
-
 }
-
 function seleccionarProveedor(id, btn) {
-
 document.querySelectorAll('#proveedoresBtns .opt-btn').forEach(b =>
 b.classList.remove('selected'));
-
 btn.classList.add('selected');
-
 STATE.loteEnCurso.proveedor_id = id;
-
 STATE.loteEnCurso.metodo_id = null;
-
 STATE.loteEnCurso.producto_id = null;
-
 document.getElementById('alertProveedor').classList.remove('visible');
-
 renderizarMetodos(id);
-
 }
-
 // ══════════════════════════════════════
-
 // MÉTODOS
-
 // ══════════════════════════════════════
-
 function renderizarMetodos(proveedorId) {
-
 const metodosFiltrados = STATE.catalogos.metodos;
-
 const container = document.getElementById('metodosBtns');
-
 container.innerHTML = '';
-
 metodosFiltrados.forEach(m => {
-
 // Solo mostrar métodos que tienen productos para este proveedor
-
 const tieneProductos = STATE.catalogos.productos.some(p =>
-
 p.proveedor_id === proveedorId && p.metodo_id === m.id
-
 );
-
 if (!tieneProductos) return;
-
 const btn = document.createElement('button');
-
 btn.className = 'opt-btn';
-
 btn.textContent = m.nombre;
-
 btn.dataset.id = m.id;
-
 btn.onclick = () => seleccionarMetodo(m.id, btn, proveedorId);
-
 container.appendChild(btn);
-
 });
-
 document.getElementById('metodoCard').style.display = 'block';
-
 document.getElementById('productoCard').style.display = 'none';
-
 document.getElementById('loteCard').style.display = 'none';
-
 document.getElementById('pruebasCard').style.display = 'none';
-
 document.getElementById('fotosCard').style.display = 'none';
-
 }
-
 function seleccionarMetodo(id, btn, proveedorId) {
-
 document.querySelectorAll('#metodosBtns .opt-btn').forEach(b =>
 b.classList.remove('selected'));
-
 btn.classList.add('selected');
-
 STATE.loteEnCurso.metodo_id = id;
-
 STATE.loteEnCurso.producto_id = null;
-
 renderizarProductos(proveedorId || STATE.loteEnCurso.proveedor_id, id);
-
 }
-
 // ══════════════════════════════════════
-
 // PRODUCTOS
-
 // ══════════════════════════════════════
-
 function renderizarProductos(proveedorId, metodoId) {
-
 const productosFiltrados = STATE.catalogos.productos.filter(p => 
 p.proveedor_id === proveedorId && p.metodo_id === metodoId
-
 );
-
 const container = document.getElementById('productosBtns');
-
 container.innerHTML = '';
-
 if (productosFiltrados.length === 0) {
-
 container.innerHTML = '<div style="font-size:13px;color:var(--text3);">No hay productos registrados para estacombinación.</div>';
 } else {
-
 productosFiltrados.forEach(p => {
-
 const btn = document.createElement('button');btn.className = 'opt-btn';btn.innerHTML = `<div style="font-weight:600;">${p.descripcion}</div><div style="font-family:var(--mono); font-size:10px; color:var(--text3); margin-top:2px;">${p.codigo}</div>`;
-
 btn.dataset.id = p.id;
-
 btn.style.textAlign = 'left';
-
 btn.onclick = () => seleccionarProducto(p.id, btn);
-
 container.appendChild(btn);
-
 });
-
 }
-
 document.getElementById('productoCard').style.display = 'block';
-
 }
-
 function seleccionarProducto(id, btn) {
-
 document.querySelectorAll('#productosBtns .opt-btn').forEach(b =>
 b.classList.remove('selected'));
-
 btn.classList.add('selected');
-
 STATE.loteEnCurso.producto_id = id;
-
 document.getElementById('alertProducto').classList.remove('visible');
-
 document.getElementById('loteCard').style.display = 'block';
-
 renderizarPruebas();
-
 validarLote();
-
 }
-
 // ══════════════════════════════════════
-
 // PRUEBAS DE CALIDAD
-
 // ══════════════════════════════════════
-
 function renderizarPruebas() {
-
 const cliente = STATE.clienteSeleccionado;
-
 const pruebasRequeridas = cliente.pruebas_requeridas
 ? cliente.pruebas_requeridas.toString().split(',').map(p => parseInt(p.trim()))
 : STATE.catalogos.pruebas.map(p => p.id);
-
 const pruebas = STATE.catalogos.pruebas.filter(p => pruebasRequeridas.includes(p.id));
-
 const container = document.getElementById('pruebasContainer');
-
 container.innerHTML = '';
-
 pruebas.forEach(prueba => {
-
 const reqs = {1: cliente.req_apariencia,2: cliente.req_espesor_min ? `MIN ${cliente.req_espesor_min} µm` : null,3: cliente.req_dureza_min ? `MIN ${cliente.req_dureza_min}` : null,4: cliente.req_adherencia_min ? `MIN ${cliente.req_adherencia_min}` :
 null, 
 5: cliente.req_curado
-
 };
-
 const div = document.createElement('div');div.className = 'prueba-card';div.id = `prueba-card-${prueba.id}`;
-
 let inputHtml = '';if (prueba.tipo === 'pass_fail') {inputHtml = `<div class="btn-grid"><button class="opt-btn pass-btn" onclick="setPrueba(${prueba.id},'ACEPTADO', this)">✓ ACEPTADO</button><button class="opt-btn fail-btn" onclick="setPrueba(${prueba.id},'RECHAZADO', this)">✗ RECHAZADO</button></div>`;} else if (prueba.tipo === 'numero') {inputHtml = `<div class="input-suffix"><input type="number" class="input-field" id="prueba-input-${prueba.id}" placeholder="0" oninput="setPruebaNumero(${prueba.id}, this.value,${cliente.req_espesor_min || 0})"><span class="suffix">µm</span></div><div class="result-indicator" id="prueba-result-${prueba.id}"></div>`;} else if (prueba.tipo === 'escala_h') {inputHtml = `<div class="btn-grid">${['6B','5B','4B','3B','2B','B','HB','F','H','2H'].map(v => `<button class="opt-btn" onclick="setPrueba(${prueba.id}, '${v}',this)">${v}</button>`).join('')}</div>`;
-
 } else if (prueba.tipo === 'escala_b') {inputHtml = `<div class="btn-grid">${['0B','1B','2B','3B','4B','5B'].map(v => `<button class="opt-btn" onclick="setPrueba(${prueba.id}, '${v}',this)">${v}</button>`).join('')}</div>`;
-
 }div.innerHTML = `<div class="prueba-header"><div class="prueba-name">${prueba.nombre}</div><div class="prueba-meta">${prueba.metodo_astm}<br>${prueba.equipo}</div></div>${reqs[prueba.id] ? `<div class="prueba-req">Requerimiento:${reqs[prueba.id]}</div>` : ''}${inputHtml}`;
-
 container.appendChild(div);
-
 });
-
 document.getElementById('pruebasCard').style.display = 'block';
-
 document.getElementById('fotosCard').style.display = 'block';
-
 // Show borrador option only when there are more lotes pending
-
 if (STATE.totalLotes > 1) {
-
 document.getElementById('borradoresCard').style.display = 'block';
-
 }
-
 }
-
 function setPrueba(id, valor, btn) {
 const card = document.getElementById(`prueba-card-${id}`);
-
 card.querySelectorAll('.opt-btn').forEach(b =>
 b.classList.remove('selected'));
-
 btn.classList.add('selected');
-
 STATE.loteEnCurso.pruebas[id] = valor;
-
 // Validar contra requerimiento
-
 const cliente = STATE.clienteSeleccionado;
-
 let cumple = true;
-
 const escalaH = ['6B','5B','4B','3B','2B','B','HB','F','H','2H'];
-
 const escalaB = ['0B','1B','2B','3B','4B','5B'];
-
 if (id === 1 || id === 5) cumple = valor === 'ACEPTADO';
-
 if (id === 3 && cliente.req_dureza_min) {
-
 const minIdx = escalaH.indexOf(cliente.req_dureza_min);
-
 const valIdx = escalaH.indexOf(valor);
-
 cumple = valIdx >= minIdx;
-
 }
-
 if (id === 4 && cliente.req_adherencia_min) {
-
 const minIdx = escalaB.indexOf(cliente.req_adherencia_min);
-
 const valIdx = escalaB.indexOf(valor);
-
 cumple = valIdx >= minIdx;
-
 }
-
 card.style.borderColor = cumple ? 'var(--pass)' : 'var(--fail)';
-
 validarLote();
-
 }
-
 function setPruebaNumero(id, valor, minimo) {STATE.loteEnCurso.pruebas[id] = parseFloat(valor) || 0;const resultDiv = document.getElementById(`prueba-result-${id}`);const card = document.getElementById(`prueba-card-${id}`);
-
 if (valor && minimo) {const cumple = parseFloat(valor) >= minimo;resultDiv.className = `result-indicator ${cumple ? 'pass' : 'fail'}`;resultDiv.textContent = cumple ? `✓ Cumple (mín. ${minimo} µm)` : `✗ Nocumple (mín. ${minimo} µm)`;
-
 card.style.borderColor = cumple ? 'var(--pass)' : 'var(--fail)';
-
 }
-
 validarLote();
-
 }
-
 // ══════════════════════════════════════
-
 // FOTOS
-
 // ══════════════════════════════════════
-
 function comprimirImagen(dataUrl, maxWidth, calidad) {
-
 return new Promise(resolve => {
-
 const img = new Image();
-
 img.onload = () => {
-
 const canvas = document.createElement('canvas');
-
 let width = img.width;
-
 let height = img.height;
-
 if (width > maxWidth) {
-
 height = Math.round(height * maxWidth / width);
-
 width = maxWidth;
-
 }
-
 canvas.width = width;
-
 canvas.height = height;
-
 const ctx = canvas.getContext('2d');
-
 ctx.drawImage(img, 0, 0, width, height);
-
 resolve(canvas.toDataURL('image/jpeg', calidad));
-
 };
-
 img.src = dataUrl;
-
 });
-
 }
-
 function agregarFotos(input) {
-
 const preview = document.getElementById('fotosPreview');
-
 Array.from(input.files).forEach(file => {
-
 const reader = new FileReader();
-
 reader.onload = async e => {
-
 // Comprimir a max 800px ancho, calidad 0.7
-
 const dataComprimida = await comprimirImagen(e.target.result, 800, 0.7);
-
 STATE.loteEnCurso.fotos.push({ name: file.name, data: dataComprimida });
-
 const wrap = document.createElement('div');
 wrap.className = 'photo-thumb';wrap.innerHTML = `<img src="${dataComprimida}"><div class="remove" onclick="this.parentElement.remove();STATE.loteEnCurso.fotos.splice(${STATE.loteEnCurso.fotos.length-1}, 1);validarLote();">×</div>`;
-
 preview.appendChild(wrap);
-
 if (STATE.loteEnCurso.fotos.length > 0) {
-
 document.getElementById('fotosReqBadge').style.display = 'none';
-
 }
-
 validarLote();
-
 };
-
 reader.readAsDataURL(file);
-
 });
-
 input.value = '';
-
 }
-
 // ══════════════════════════════════════
-
 // ANÁLISIS IA
-
 // ══════════════════════════════════════
-
 async function analizarImagen(input) {
-
 if (!input.files[0]) return;
-
 mostrarLoading('Analizando imagen con IA...');
-
 const file = input.files[0];
-
 const formData = new FormData();
-
 formData.append('image', file);
-
 try {
-
 const res = await fetch(CONFIG.analizarImagenUrl, {
-
 method: 'POST', 
 body: formData
-
 });
-
 const data = await res.json();
-
 ocultarLoading();
-
 if (data.exito && data.datos) {
-
 mostrarResultadoIA(data.datos);
-
 } else {
-
 mostrarAlerta('No se pudo analizar la imagen. Selecciona manualmente.', 'warn');
-
 }
-
 } catch(e) {
-
 ocultarLoading();
-
 mostrarAlerta('Error al analizar la imagen. Selecciona manualmente.', 'warn');
-
 }
-
 input.value = '';
-
 }
-
 function mostrarResultadoIA(datos) {
-
 STATE.loteEnCurso.ai_datos = datos;
-
 const container = document.getElementById('aiFields');
-
 container.innerHTML = '';
-
 const campos = [
-
 { key: 'proveedor', label: 'Proveedor' },
-
 { key: 'codigo_producto', label: 'Código' },
-
 { key: 'numero_lote', label: 'No. Lote' },
-
 { key: 'descripcion_color', label: 'Color' },
-
 { key: 'metodo_aplicacion', label: 'Método' }
-
 ];
-
 campos.forEach(campo => {
-
 if (!datos[campo.key]) return;
-
 const div = document.createElement('div');
 div.className = 'ai-field';div.innerHTML = `<span class="ai-field-key">${campo.label}</span><span class="ai-field-val">${datos[campo.key]}</span>`;
-
 container.appendChild(div);
 });document.getElementById('aiConfidence').textContent = `Confianza delanálisis: ${datos.confianza || 'desconocida'}`;
-
 document.getElementById('aiResult').classList.add('visible');
-
 // Intentar preseleccionar proveedor
-
 if (datos.proveedor) {
-
 const proveedor = STATE.catalogos.proveedores.find(p =>
-
 p.nombre.toLowerCase().includes(datos.proveedor.toLowerCase()) ||
-
 datos.proveedor.toLowerCase().includes(p.nombre.toLowerCase())
-
 );
 if (proveedor) {const btn = document.querySelector(`#proveedoresBtns[data-id="${proveedor.id}"]`);
-
 if (btn) seleccionarProveedor(proveedor.id, btn);
-
 } else {
 const alertDiv = document.getElementById('alertProveedor');alertDiv.textContent = `⚠️ Proveedor "${datos.proveedor}" no encontradoen tu catálogo. Selecciona manualmente.`;
-
 alertDiv.classList.add('visible');
-
 }
-
 }
-
 // Intentar preseleccionar producto por código
-
 if (datos.codigo_producto) {
-
 const producto = STATE.catalogos.productos.find(p =>
-
 p.codigo &&
 p.codigo.toLowerCase().includes(datos.codigo_producto.toLowerCase())
-
 );
-
 if (!producto) {
 const alertDiv = document.getElementById('alertProducto');alertDiv.textContent = `⚠️ Código "${datos.codigo_producto}" noencontrado. Selecciona manualmente.`;
-
 alertDiv.classList.add('visible');
-
 }
-
 }
-
 // Prellenar lote
-
 if (datos.numero_lote) {
-
 document.getElementById('noLoteFabricante').value = datos.numero_lote;
-
 STATE.loteEnCurso.no_lote_fabricante = datos.numero_lote;
-
 }
-
 }
-
 function toggleManual() {
-
 const card = document.getElementById('proveedorCard');
-
 card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
 card.style.borderColor = 'var(--accent)';
-
 setTimeout(() => { card.style.borderColor = 'var(--border)'; }, 2000);
-
 }
-
 // ══════════════════════════════════════
-
 // VALIDAR LOTE
-
 // ══════════════════════════════════════
-
 function validarLote() {
-
 const cliente = STATE.clienteSeleccionado;
-
 const pruebasRequeridas = cliente.pruebas_requeridas
 ? cliente.pruebas_requeridas.toString().split(',').map(p => parseInt(p.trim()))
 : STATE.catalogos.pruebas.map(p => p.id);
-
 const tienePruebas = pruebasRequeridas.every(id =>
 STATE.loteEnCurso.pruebas[id] !== undefined &&
 STATE.loteEnCurso.pruebas[id] !== '');
-
 const tieneProveedor = STATE.loteEnCurso.proveedor_id !== null;
-
 const tieneMetodo = STATE.loteEnCurso.metodo_id !== null;
-
 const tieneProducto = STATE.loteEnCurso.producto_id !== null;
-
 const tieneLote =
 document.getElementById('noLoteFabricante').value.trim() !== '';
-
 const tieneFotos = STATE.loteEnCurso.fotos.length > 0;
-
 STATE.loteEnCurso.no_lote_fabricante =
 document.getElementById('noLoteFabricante').value.trim();
-
 const valido = tieneProveedor && tieneMetodo && tieneProducto &&
 tieneLote && tienePruebas && tieneFotos;
-
 document.getElementById('btnLote').disabled = !valido;
-
 if (tieneFotos) {
-
 document.getElementById('fotosReqBadge').style.display = 'none';
-
 }
-
 }
-
 // ══════════════════════════════════════
-
 // GUARDAR LOTE
-
 // ══════════════════════════════════════
-
 function guardarLote() {
-
 const loteData = {
-
 numero_lote: STATE.loteActual,
-
 proveedor_id: STATE.loteEnCurso.proveedor_id,
-
 proveedor_nombre: STATE.catalogos.proveedores.find(p => p.id ===
 STATE.loteEnCurso.proveedor_id)?.nombre,
-
 metodo_id: STATE.loteEnCurso.metodo_id,
-
 metodo_nombre: STATE.catalogos.metodos.find(m => m.id ===
 STATE.loteEnCurso.metodo_id)?.nombre,
-
 producto_id: STATE.loteEnCurso.producto_id,
-
 producto: STATE.catalogos.productos.find(p => p.id ===
 STATE.loteEnCurso.producto_id),
-
 no_lote_fabricante: STATE.loteEnCurso.no_lote_fabricante,
-
 pruebas: { ...STATE.loteEnCurso.pruebas },
-
 fotos: STATE.loteEnCurso.fotos.map(f => ({ name: f.name, data: f.data
 })),
-
 ai_datos: STATE.loteEnCurso.ai_datos
-
 };
-
 STATE.lotes.push(loteData);
-
 if (STATE.loteActual < STATE.totalLotes) {
-
 STATE.loteActual++;
-
 renderizarLote();
-
 window.scrollTo(0, 0);
-
 } else {
-
 mostrarResumen();
-
 goTo('screen-resumen');
-
 }
-
 }
-
 function lotePrevio() {
-
 if (STATE.loteActual > 1) {
-
 STATE.loteActual--;
-
 STATE.lotes.pop();
-
 renderizarLote();
-
 } else {
-
 goTo('screen-encabezado');
-
 }
-
 }
-
 // ══════════════════════════════════════
-
 // RESUMEN
-
 // ══════════════════════════════════════
-
 function mostrarResumen() {
-
 // Encabezado
 const enc = STATE.encabezado;document.getElementById('resumenEncabezado').innerHTML = `<div class="summary-row"><span class="summary-key">Cliente</span><spanclass="summary-val">${enc.cliente_nombre}</span></div><div class="summary-row"><span class="summary-key">No. Pieza</span><spanclass="summary-val">${enc.no_pieza}</span></div><div class="summary-row"><span class="summary-key">No.Proyecto</span><span class="summary-val">${enc.no_proyecto}</span></div><div class="summary-row"><span class="summary-key">Cantidad</span><spanclass="summary-val">${enc.cantidad_piezas}</span></div><div class="summary-row"><span class="summary-key">TotalLotes</span><span class="summary-val">${enc.total_lotes}</span></div>`;
-
 // Lotes
-
 const lotesContainer = document.getElementById('resumenLotes');
-
 lotesContainer.innerHTML = '';
-
 let hayFalla = false;
-
 STATE.lotes.forEach((lote, i) => {
-
 const pruebasHtml = Object.entries(lote.pruebas).map(([id, val]) => {
-
 const prueba = STATE.catalogos.pruebas.find(p => p.id === parseInt(id));
-
 const esFalla = val === 'RECHAZADO' || (prueba?.tipo === 'numero' &&
 checkFallaNumero(parseInt(id), val));
 if (esFalla) hayFalla = true;return `<div class="summary-row"><span class="summary-key">${prueba?.nombre || id}</span><span class="summary-val ${esFalla ? 'fail' :'pass'}">${val}${prueba?.tipo === 'numero' ? ' µm' : ''}</span></div>`;
-
 }).join('');
-
 const div = document.createElement('div');
 div.className = 'summary-lote';div.innerHTML = `<div class="summary-lote-title">Lote ${i+1} —${lote.proveedor_nombre}</div><div class="summary-row"><span class="summary-key">Producto</span><spanclass="summary-val">${lote.producto?.descripcion || '—'}</span></div><div class="summary-row"><span class="summary-key">Código</span><spanclass="summary-val" style="font-family:var(--mono); font-size:12px;">${lote.producto?.codigo || '—'}</span></div><div class="summary-row"><span class="summary-key">No. Lote</span><spanclass="summary-val" style="font-family:var(--mono); font-size:12px;">${lote.no_lote_fabricante}</span></div><div class="summary-row"><span class="summary-key">Fotos</span><spanclass="summary-val">${lote.fotos.length} imagen(es)</span></div>${pruebasHtml}`;
-
 lotesContainer.appendChild(div);
-
 });
-
 // Resultado general
 const resultDiv = document.getElementById('resultadoGeneral');resultDiv.innerHTML = `<div class="result-badge ${hayFalla ? 'fail' : 'pass'}"><div class="rb-icon">${hayFalla ? '❌' : '✅'}</div><div class="rb-text">${hayFalla ? 'RECHAZADO' : 'APROBADO'}</div><div class="rb-sub">Resultado general del certificado</div></div>`;
-
 STATE.resultadoGeneral = hayFalla ? 'RECHAZADO' : 'APROBADO';
-
 }
-
 function checkFallaNumero(id, val) {
-
 const cliente = STATE.clienteSeleccionado;
-
 if (id === 2) return parseFloat(val) < (cliente.req_espesor_min || 0);
-
 return false;
-
 }
-
 // ══════════════════════════════════════
-
 // GUARDAR BORRADOR
-
 // ══════════════════════════════════════
-
 async function guardarBorrador() {
-
 // Guardar lote actual si tiene datos
-
 const loteData = {
-
 numero_lote: STATE.loteActual,
-
 proveedor_id: STATE.loteEnCurso.proveedor_id,
-
 proveedor_nombre: STATE.catalogos.proveedores.find(p => p.id ===
 STATE.loteEnCurso.proveedor_id)?.nombre,
-
 metodo_id: STATE.loteEnCurso.metodo_id,
-
 metodo_nombre: STATE.catalogos.metodos.find(m => m.id ===
 STATE.loteEnCurso.metodo_id)?.nombre,
-
 producto_id: STATE.loteEnCurso.producto_id,
-
 producto: STATE.catalogos.productos.find(p => p.id ===
 STATE.loteEnCurso.producto_id),
-
 no_lote_fabricante: STATE.loteEnCurso.no_lote_fabricante,
-
 pruebas: { ...STATE.loteEnCurso.pruebas },
-
 fotos: STATE.loteEnCurso.fotos.map(f => ({ name: f.name, data: f.data
 })),
-
 ai_datos: STATE.loteEnCurso.ai_datos
-
 };
-
 const lotesCopy = [...STATE.lotes, loteData];
-
 mostrarLoading('Guardando borrador...');
-
 const payload = {
-
 tipo: 'borrador',
-
 inspector_id: STATE.inspector.id,
-
 telegram_id: STATE.inspector.telegram_id,
-
 encabezado: STATE.encabezado,
-
 lotes: lotesCopy,
-
 lote_actual: STATE.loteActual,
-
 total_lotes: STATE.totalLotes,
-
 timestamp: new Date().toISOString()
-
 };
-
 try {
-
 const res = await fetch(CONFIG.guardarUrl, {
-
 method: 'POST', 
 headers: { 'Content-Type': 'application/json' }, 
 body: JSON.stringify(payload)
-
 });
-
 ocultarLoading();
-
 if (res.ok) {
-
 alert('✅ Borrador guardado. Cuando lleguen los demás carritos manda/retomar al bot de Telegram para continuar.');
-
 } else {
-
 alert('Error al guardar. Intenta de nuevo.');
-
 }
-
 } catch(e) {
-
 ocultarLoading();
-
 alert('Error de conexión. Intenta de nuevo.');
-
 }
-
 }
-
 // ══════════════════════════════════════
-
 // CONFIRMAR CIERRE
-
 // ══════════════════════════════════════
-
 async function confirmarCierre() {
-
 mostrarLoading('Preparando certificado...');
-
 // Si el lote en curso tiene datos y no fue guardado, guardarlo automáticamente
 if (STATE.loteActual === STATE.totalLotes && STATE.lotes.length < STATE.totalLotes) {
   // Esperar hasta 5s a que todas las fotos terminen de comprimir (son async)
@@ -2824,7 +1106,6 @@ if (STATE.loteActual === STATE.totalLotes && STATE.lotes.length < STATE.totalLot
     }
   };
   await esperarFotos();
-
   const loteEnCursoData = {
     numero_lote: STATE.loteActual,
     proveedor_id: STATE.loteEnCurso.proveedor_id,
@@ -2840,20 +1121,16 @@ if (STATE.loteActual === STATE.totalLotes && STATE.lotes.length < STATE.totalLot
   };
   STATE.lotes.push(loteEnCursoData);
 }
-
 let lotesComprimidos;
-
 if (STATE.modo === 'retomar') {
   // En modo retomar: lotes viejos tienen ruta_onedrive, lote nuevo tiene fotos con data
   const totalFotosNuevas = STATE.lotes
     .slice(STATE.borrador.lotes_completados)
     .reduce((acc, l) => acc + (l.fotos?.length || 0), 0);
-
   let maxWidth = 800, calidad = 0.7;
   if (totalFotosNuevas <= 5) { maxWidth = 800; calidad = 0.7; }
   else if (totalFotosNuevas <= 15) { maxWidth = 600; calidad = 0.5; }
   else { maxWidth = 400; calidad = 0.35; }
-
   lotesComprimidos = await Promise.all(STATE.lotes.map(async (lote, idx) => {
     const esLoteViejo = idx < STATE.borrador.lotes_completados;
     if (esLoteViejo) {
@@ -2883,7 +1160,6 @@ if (STATE.modo === 'retomar') {
   else if (totalFotos <= 15) { maxWidth = 600; calidad = 0.5; }
   else if (totalFotos <= 25) { maxWidth = 400; calidad = 0.35; }
   else { maxWidth = 300; calidad = 0.25; }
-
   lotesComprimidos = await Promise.all(STATE.lotes.map(async lote => {
     const fotosComprimidas = await Promise.all((lote.fotos || []).map(async foto => {
       const dataComprimida = await comprimirImagen(foto.data, maxWidth, calidad);
@@ -2892,146 +1168,77 @@ if (STATE.modo === 'retomar') {
     return { ...lote, fotos: fotosComprimidas };
   }));
 }
-
 mostrarLoading('Enviando certificado...');
-
 const payload = {
-
 inspector_id: STATE.inspector.id,
-
 telegram_id: STATE.inspector.telegram_id,
-
 modo: STATE.modo,
-
 no_certificado: STATE.borrador ? STATE.borrador.no_certificado : null,
-
 token: STATE.borrador ? STATE.borrador.token : null,
-
 encabezado: STATE.encabezado,
-
 lotes: lotesComprimidos,
-
 resultado_general: STATE.resultadoGeneral,
-
 observaciones: document.getElementById('observaciones').value.trim(),
-
 timestamp: new Date().toISOString()
-
 };
-
 try {
-
 const res = await fetch(CONFIG.enviarUrl, {
-
 method: 'POST', 
 headers: { 'Content-Type': 'application/json' }, 
 body: JSON.stringify(payload)
-
 });
-
 ocultarLoading();
-
 if (res.ok) {
 document.getElementById('enviadoCertNum').textContent =`${STATE.encabezado.cliente_id} — ${STATE.encabezado.no_pieza} — ${new Date().toLocaleDateString('es-MX')}`;
-
 goTo('screen-enviado');
-
 } else {
-
 mostrarAlerta('Error al enviar. Intenta de nuevo.', 'danger');
-
 }
-
 } catch(e) {
-
 ocultarLoading();
-
 mostrarAlerta('Error de conexión. Intenta de nuevo.', 'danger');
-
 }
-
 }
-
 // ══════════════════════════════════════
-
 // BORRADORES (placeholder)
-
 // ══════════════════════════════════════
-
 function mostrarBorradores() {
-
 alert('Función de borradores en construcción. Por ahora inicia uncertificado nuevo.');
-
 }
-
 function nuevoInicio() {
-
 STATE = {
-
 inspector: STATE.inspector,
-
 catalogos: STATE.catalogos,
-
 clienteSeleccionado: null,
-
 encabezado: {},
-
 totalLotes: 1,
-
 loteActual: 1,
-
 lotes: [],
-
 loteEnCurso: { proveedor_id: null, metodo_id: null, producto_id: null,
 no_lote_fabricante: null, pruebas: {}, fotos: [], ai_datos: null }
-
 };
-
 goTo('screen-menu');
-
 }
-
 // ══════════════════════════════════════
-
 // HELPERS
-
 // ══════════════════════════════════════
-
 function mostrarLoading(texto) {
-
 document.getElementById('loadingText').textContent = texto ||
 'Cargando...';
-
 document.getElementById('loadingOverlay').classList.add('visible');
-
 }
-
 function ocultarLoading() {
-
 document.getElementById('loadingOverlay').classList.remove('visible');
-
 }
-
 function mostrarAlerta(msg, tipo) {
-
 // Simple alert por ahora
-
 alert(msg);
-
 }function mostrarError(msg) {document.body.innerHTML = `<div style="padding:40px 20px; text-align:center; font-family:var(--sans);"><div style="font-size:48px; margin-bottom:16px;">⛔</div><div style="font-size:18px; font-weight:600; color:#ff4757; margin-bottom:8px;">Acceso denegado</div><div style="font-size:14px; color:#9ca3b0;">${msg}</div></div>`;
-
 }
-
 // ══════════════════════════════════════
-
 // ARRANCAR
-
 // ══════════════════════════════════════
-
 document.addEventListener('DOMContentLoaded', init);
-
 </script>
-
 </body>
-
 </html>
